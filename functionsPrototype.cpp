@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-int main(){
+int functionsPrototype(){
         std::cout << "Prototype function test for fork(), waitpid(), and execvp." << std::endl;
         int* status;
         char* command = "ls";
