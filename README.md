@@ -21,12 +21,12 @@ This program is a command line interface that is able to take in commands in the
 ## Prototypes/Research
 After watching the suggested youtube videos for forking and reading up on implementation for fork(), waitpid(), and execvp(), a prototype function was created to test how these functions work with together. This prototype implemented fork(), then used waitpid() to allow the child to go first. The child then performed execvp(). Once the child was finished, the parent concluded the program with an ending message. The findings of this prototype function resulted in proper implementation and understanding of the functions. This prototype for testing the functions will be the basis of the actual assignment with fork and wait carrying out order of tasks and execvp executing the commands. A parser prototype was also created to divide user input into different vectors of command, argument, and connector. This parser prototype will be the general structure of the actual parser which will be bug free and complete. 
 ## Development and Testing Roadmap
--Create main shell file/n
--Create classes/n
--Create helper functions for fork, wait, and execvp
--Implement helper functions onto main shell file
--Make test cases for the shell file
--Create parser(tokenizer)
--Make test cases for tokenizer
--Implement parser to the shell
--Debug
+*Create main shell file
+*Create classes
+*Create helper functions for fork, wait, and execvp
+*Implement helper functions onto main shell file
+*Make test cases for the shell file
+*Create parser(tokenizer)
+*Make test cases for tokenizer
+*Implement parser to the shell
+*Debug
