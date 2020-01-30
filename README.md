@@ -7,7 +7,7 @@
 
 ## Introduction
 This program is a command line interface that is able to take in commands in the the following format:
-`$ executable [argumentList] [connector] [executable] ...`. There are only two executables that will be recognized by the program: `mkdir` and `ls`. Moreover, `&&`, `||`, and `;` are the only valid connectors that will be recognized. Inputs that are fed to the command line interface are first parsed into two separate categories. The first category includes the parts that make up a command (the executable and its arguments). It will be represented by a class called `CommandToken`.  The other category describes the connectors, and it will be defined by a class called `ConnectorToken`. These tokens will be grouped together by a `Tokenizer` class and then executed by an `Executor` class that takes in a vector of tokens.
+`$ executable [argumentList] [connector] [executable] ...`. Inputs that are fed to the command line interface are first parsed into two separate categories. The first category includes the parts that make up a command (the executable and its arguments). It will be represented by a class called `CommandToken`.  The other category describes the connectors, and it will be defined by a class called `ConnectorToken`. These tokens will be grouped together by a `Tokenizer` class and then executed by an `Executor` class that takes in a vector of tokens.
 
 ## Diagram
 ![GitHub Logo](/images/OMT.png)
