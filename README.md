@@ -27,4 +27,3 @@ After watching the suggested youtube videos for forking and reading up on implem
 * Refine parser prototype
 * Create and perform unit tests
 * Create and carry out integration tests
-* Implement helper functions onto main shell file
