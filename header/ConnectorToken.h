@@ -5,7 +5,7 @@
 
 class ConnectorToken : public Token {
     public:
-        ConnectorToken(std::string s) : Token(s) {}
+        ConnectorToken(std::string s) : Token(s) {id = Identity::ConnectorToken;}
 };
 
 #endif
