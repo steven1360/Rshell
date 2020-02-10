@@ -5,7 +5,7 @@
 
 class ArgToken : public Token {
     public:
-        ArgToken(std::string s) : Token(s) {id = Identity::ArgToken; }
+        ArgToken(std::string s) : Token(s) {id = Identity::ARGTOKEN; }
 };
 
 #endif

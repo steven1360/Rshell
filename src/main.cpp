@@ -8,5 +8,5 @@ int main() {
     std::vector<Token*> t = Tokenizer::makeTokens("ls -a;"); 
     Executor ex(t);
     ex.execute();
-    
+
 }

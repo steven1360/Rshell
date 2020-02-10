@@ -3,10 +3,10 @@
 #include <string>
 
 enum Identity {
-    ArgToken,
-    BadToken,
-    ConnectorToken,
-    ExecToken
+    ARGTOKEN,
+    BADTOKEN,
+    CONNECTORTOKEN,
+    EXECTOKEN
 };
 
 class Token {

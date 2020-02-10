@@ -5,7 +5,7 @@
 
 class BadToken : public Token {
     public:
-        BadToken(std::string s) : Token(s) {id = Identity::BadToken;}
+        BadToken(std::string s) : Token(s) {id = Identity::BADTOKEN;}
 };
 
 #endif

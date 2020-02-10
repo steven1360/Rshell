@@ -22,11 +22,11 @@ class Executor {
 
             //probably works only if tokens vector size >= 2
             for (unsigned i = 0; i + 1 < tokens.size(); i++) {
-                if (tokens.at(i).identity == Identity::ExecToken && tokens.at(i+1).identity == Identity::ArgToken) {
+                if (tokens.at(i)->identity == Identity::EXECTOKEN && tokens.at(i+1)->identity == Identity::ARGTOKEN) {
                     executable = tokens.at(i);
                     argument = tokens.at(i+1);
                 }
-                else if (tokens.at(i).identity == Identity::ExecToken && tokens.at(i+1).identity == Identity::ConnectorToken) {
+                else if (tokens.at(i)->identity == Identity::EXECTOKEN && tokens.at(i+1)->identity == Identity::CONNECTORTOKEN) {
                     executable = tokens.at(i);
                     connector = tokens.at(i+1);
                 }
