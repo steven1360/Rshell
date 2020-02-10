@@ -45,9 +45,14 @@ class Tokenizer {
 
             if (!command.empty()) {
                     auto pair = getExecAndArg( removeWhitespace(command) );
-                    v.push_back( new ExecToken(pair.first) );
-                    v.push_back( new ExecToken(pair.second) );
+		    if (!pair.first.empty()) {
+                 	   v.push_back( new ExecToken(pair.first) );
+		    }
+		    if (!pair.second.empty()) {
+             	           v.push_back( new ExecToken(pair.second) );
+		    }
             }
+
 
             return v;
         }
