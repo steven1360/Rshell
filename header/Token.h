@@ -5,7 +5,6 @@
 class Token {
     public:
     std::string val;
-    public:
     Token(std::string s) : val(s) {}
 };
 
