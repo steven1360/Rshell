@@ -18,7 +18,7 @@ TEST(TokenizerTest, validString_2) {
 TEST(TokenizerTest, validString_3) {
     std::string input = "echo \"hello\" && ls;      echo        test;";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
-    EXPECT_EQ(7, tokens.size());
+    EXPECT_EQ(8, tokens.size());
 }
 
 
@@ -55,7 +55,7 @@ TEST(TokenizerTest, validString_8) {
 TEST(TokenizerTest, validString_9) {
     std::string input = "echo \"hello\" && echo no;";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
-    EXPECT_EQ(5, tokens.size());
+    EXPECT_EQ(6, tokens.size());
 }
 
 TEST(TokenizerTest, validString_10) {
@@ -146,7 +146,7 @@ TEST(TokenizerTest, invalidString_7) {
 TEST(TokenizerTest, invalidString_8) {
     std::string input = "mkdir echo";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
-    EXPECT_EQ(1, tokens.size());
+    EXPECT_EQ(2, tokens.size());
 }
 
 TEST(TokenizerTest, invalidString_9) {
