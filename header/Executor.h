@@ -13,69 +13,108 @@ class Executor {
         std::vector<Token*> tokens;
     public:
         Executor(const std::vector<Token*> v) {
-            tokens = v;
-        }
-        void execute() {
+		tokens = v;
+ 	}
+	void execute() {
+            std::vector<Token*> currTokens;
+            bool previousExecuteFailed = false;
+            int j = 0;
             Token* executable = nullptr;
             Token* argument = nullptr;
-            Token* connector = nullptr;
+            int x;
 
-            //probably works only if tokens vector size >= 2
-            for (unsigned i = 0; i + 1 < tokens.size(); i++) {
-                if (tokens.at(i)->id == Identity::EXECTOKEN && tokens.at(i+1)->id == Identity::ARGTOKEN) {
-                    executable = tokens.at(i);
-                    argument = tokens.at(i+1);
-                }
-                else if (tokens.at(i)->id == Identity::EXECTOKEN && tokens.at(i+1)->id == Identity::CONNECTORTOKEN) {
-                    executable = tokens.at(i);
-                    connector = tokens.at(i+1);
+            while ( j < tokens.size() ) {
+
+                if ( tokens.at(j)->id != Identity::CONNECTORTOKEN ) {
+
+                    currTokens.push_back( tokens.at(j) );
+                    j++;
+
+
                 }
                 else {
-                    executable = tokens.at(i);
-                }
+                    if ( !previousExecuteFailed ) {
+                        if ( tokens.at(j)->val == "||" ) {
+                            return;
+                        }
+                        executable = currTokens.empty() ? nullptr : currTokens.at(0);
+                        argument = currTokens.size() >= 2 ? currTokens.at(1) : nullptr;
+                        x = execute( executable, argument );
+                        currTokens[0] = nullptr;
+                        currTokens[1] = nullptr;
+                        executable = nullptr;
+                        argument = nullptr;
+                        j++;
+                    }
+                    else {
+                        if ( tokens.at(j)->val == "&&" ) {
+                            return;
+                        }
+                        executable = currTokens.empty() ? nullptr : currTokens.at(0);
+                        argument = currTokens.size() >= 2 ? currTokens.at(1) : nullptr;
 
-                if (execute(executable, argument) == -1 ) {
-                    std::cout << "ERROR executing" << std::endl;
-                    return;
-                } 
+                        x = execute( executable, argument);
+                        executable = nullptr;
+                        argument = nullptr;
+                        currTokens[0] = nullptr;
+                        currTokens[1] = nullptr;
+
+                        j++;
+                        previousExecuteFailed = false;
+                    }
+                }
+                           if (executable) std::cout << executable->val << std::endl;
+                          if (argument) std::cout << argument->val << std::endl;
+
             }
-        }
+
+            if ( !currTokens.empty() ) {
+                  executable = currTokens.empty() ? nullptr : currTokens.at(0);
+                  argument = currTokens.size() >= 2 ? currTokens.at(1) : nullptr;
+                if (executable) std::cout << executable->val << std::endl;
+                if (argument) std::cout << argument->val << std::endl;
+                 x = execute( executable, argument);
+                  if (x == -1) {
+                    std::cout << "execvp failed" << std::endl;
+                  }
+                  else {
+                 std::cout << "execvp success" << std::endl;
+                                                                                                                                      }
+	}
     private:
-        int execute(Token* exec, Token* arg) {
+        int execute(Token* ex, Token* arg) {
 	    std::string executable;
 	    std::string argument;
-	    if (exec) {
-		executable = exec->val;
-	    }
-            if (arg) {
+	
+	   if (ex) {
+		executable = ex->val;
+	   }
+	   if (arg) {
 		argument = arg->val;
-	    }
-
-	    std::cout << executable << " " << argument << std::endl;
+	   }
+	    
 
             int value; 	
             int* status;
             std::vector<std::string> parsedArgs = parseArguments(argument);
-            const char* exec_cstr = executable.c_str();
-            char* arg_cstr[parsedArgs.size()];
-
-            for (int i = 0; i < parsedArgs.size(); i++) {
-                arg_cstr[i] = const_cast<char*>( parsedArgs.at(i).c_str() );
+	    char* command[500];
+	    int i = 0;
+	    command[i] =  const_cast<char*>( executable.c_str() ) ;
+            for (int j = 0; j < parsedArgs.size(); j++) {
+                command[++i] = const_cast<char*>( parsedArgs.at(j).c_str() );
             }
-
-	    char* testArr[1];
-	    testArr[0] = "-a";
-
+	   // command[i+1] = NULL;
+       
             pid_t process = fork();
             waitpid(0, status,  0);
             if(process == 0){
-               value =  execvp(exec_cstr, testArr);    
+               return execvp(command[0], command); 
             }
             else if (process < 0) {
                 std::cout << "fork() failed" << std::endl;
             }
 	    else {
-		return value;
+		
 	    }
         }
 

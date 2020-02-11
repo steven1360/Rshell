@@ -49,7 +49,7 @@ class Tokenizer {
                         if (!pair.first.empty()) 
                             v.push_back( new ExecToken(pair.first) );
                         if (!pair.second.empty()) 
-                            v.push_back( new ExecToken(pair.second) );
+                            v.push_back( new ArgToken(pair.second) );
 
                     v.push_back( new ConnectorToken( removeWhitespace( s.substr(i, 2) ) ) );
                     command.clear();
@@ -62,7 +62,7 @@ class Tokenizer {
                     if (!pair.first.empty()) 
                             v.push_back( new ExecToken(pair.first) );
                     if (!pair.second.empty()) 
-                                v.push_back( new ExecToken(pair.second) );
+                                v.push_back( new ArgToken(pair.second) );
 
                     v.push_back( new ConnectorToken(";") );
                     command.clear();
@@ -74,19 +74,31 @@ class Tokenizer {
             }
 
             //In case string doesn't end with ';'
-            if (!command.empty()) {
-                auto pair = getExecAndArg( removeWhitespace(command) );
+            if (!command.empty() ) {
 
-                if (!pair.first.empty()) 
-                        v.push_back( new ExecToken(pair.first) );
-                if (!pair.second.empty()) 
-                        v.push_back( new ExecToken(pair.second) );
-            }
+		 auto pair = getExecAndArg( removeWhitespace(command) );
+		if ( !v.empty() ) {
+			if (!pair.first.empty() && v.back()->id == Identity::CONNECTORTOKEN ) {
+				v.push_back( new ExecToken(pair.first) ) ;
+			}
+			if (!pair.second.empty() && v.back()->id == Identity::EXECTOKEN ) {
+				v.push_back( new ArgToken(pair.second) );
+			}
+		}
+		else {
+				
+               		 if (!pair.first.empty()) 
+                       		 v.push_back( new ExecToken(pair.first) );
+               		 if (!pair.second.empty()) 
+                       		 v.push_back( new ArgToken(pair.second) );
+                }
+       	    }
+	   
+	     combineTokensWithQuotes(v, s);
 
-            combineTokensWithQuotes(v, s);
+             return v;
 
-            return v;
-        }
+	}
     private:
         static std::pair<std::string, std::string> getExecAndArg(const std::string& command) {
             std::string executable;
