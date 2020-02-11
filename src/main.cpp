@@ -7,7 +7,7 @@
 int main() {
     std::vector<Token*> t = Tokenizer::makeTokens("echo sup"); 
     for (int i = 0; i < t.size(); i++) {
-	std::cout << "~~~TOKEN~~~:" << t.at(i)->val << ", id: " << t.at(i)->id  << std::endl;
+	      std::cout << "~~~TOKEN~~~:" << t.at(i)->val << ", id: " << t.at(i)->id  << std::endl;
     }
     Executor ex(t);
     ex.execute();
