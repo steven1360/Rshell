@@ -5,10 +5,13 @@
 
 //"ls -a; echo test && mkdir hi || echo hello; git status"
 int main() {
-    std::vector<Token*> t = Tokenizer::makeTokens("echo hey && echolol || echo test; echo yo"); 
-    for (int i = 0; i < t.size(); i++) {
-	      std::cout << "~~~TOKEN~~~:" << t.at(i)->val << ", id: " << t.at(i)->id  << std::endl;
+    std::cout << "$ ";
+    std::string input;
+
+    while (std::getline(std::cin, input) ) {
+	std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+	Executor ex(tokens);
+	ex.execute();
+	std::cout << "$ ";
     }
-    Executor ex(t);
-    ex.execute();
 }

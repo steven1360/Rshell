@@ -19,11 +19,12 @@ class Executor {
         Token* executable = nullptr;
         Token* next = nullptr;
 	int size = tokens.size();
-	int x;
+	int x = 1;
 	bool prevCommandFailed = false;
 
-	std::cout << "size: " << tokens.size() << std::endl;
-        for (unsigned i = 0; i < size; i++) {
+//	std::cout << "size: " << tokens.size() << std::endl;
+	int i = 0;
+        for (i = 0; i < size; i++) {
 
             if ( tokens.at(i)->id == Identity::EXECTOKEN) {
                 executable = tokens.at(i);
@@ -69,19 +70,19 @@ class Executor {
 		continue;
 	    }
 		
-	    std::cout << "i:  " << i << std::endl;
-	    if (x == -1) {
-		std::cout << "execvp failed" << std::endl;
+//	    std::cout << "i:  " << i << "     , x: " << x <<  std::endl;
+	    if (x < 0) {
+//		std::cout << "execvp failed" << std::endl;
 		prevCommandFailed = true;
 	    }
 	    else {
-		std::cout << "execvp worked" << std::endl;
+//		std::cout << "execvp worked" << std::endl;
 	    }
  
         }      
     }
     private:
-        int execute(Token* ex, Token* arg) {
+         int execute(Token* ex, Token* arg) {
             std::string executable;
             std::string argument;
             
@@ -98,23 +99,24 @@ class Executor {
             std::vector<std::string> parsedArgs = parseArguments(argument);
 	
             char* command[parsedArgs.size()+1];
-            int i = 0;
+            int n = 0;
 
-            command[i] =  const_cast<char*>( executable.c_str() ) ;
+            command[n] =  const_cast<char*>( executable.c_str() ) ;
             for (int j = 0; j < parsedArgs.size(); j++) {
-                command[++i] = const_cast<char*>( parsedArgs.at(j).c_str() );
+                command[++n] = const_cast<char*>( parsedArgs.at(j).c_str() );
             }
-            command[i+1] = NULL;
+            command[n+1] = NULL;
             pid_t process = fork();
-            waitpid(0, status,  0);
+           
             if(process == 0){
-               return execvp(command[0], command); 
+        	return execvp(command[0], command);
+	
             }
             else if (process < 0) {
                 std::cout << "fork() failed" << std::endl;
             }
             else {
-            
+         	waitpid(0, status, 0);   
             }
         }
 
@@ -140,6 +142,7 @@ class Executor {
         }
 
 };
+
 
 
 #endif
