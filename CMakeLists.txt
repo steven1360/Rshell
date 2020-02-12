@@ -12,6 +12,9 @@ ADD_EXECUTABLE(rshell
    src/main.cpp
 )
 
+ADD_EXECUTABLE(executor_test
+   unit_tests/executor_test.cpp
+)
 
 TARGET_LINK_LIBRARIES(test gtest)
 TARGET_COMPILE_DEFINITIONS(test PRIVATE gtest_disable_pthreads=ON)
