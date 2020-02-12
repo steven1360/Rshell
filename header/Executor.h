@@ -69,11 +69,16 @@ class Executor {
 	    else if ( tokens.at(i)->id == Identity::ARGTOKEN ) {
 		continue;
 	    }
+	    else if (tokens.at(i)->id == Identity::BADTOKEN) {
+		std:: cout << "-bash: syntax error near unexpected token `" <<  tokens.at(i)->val << "'" << std::endl;
+	    }
 		
 //	    std::cout << "i:  " << i << "     , x: " << x <<  std::endl;
 	    if (x < 0) {
 //		std::cout << "execvp failed" << std::endl;
 		prevCommandFailed = true;
+		std::cout << "-bash: " << executable->val << ": command not found" << std::endl;
+
 	    }
 	    else {
 //		std::cout << "execvp worked" << std::endl;
@@ -110,13 +115,13 @@ class Executor {
            
             if(process == 0){
         	return execvp(command[0], command);
-	
+
             }
             else if (process < 0) {
                 std::cout << "fork() failed" << std::endl;
             }
             else {
-         	waitpid(0, status, 0);   
+         	waitpid(0, status, 0);
             }
         }
 

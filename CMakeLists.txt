@@ -8,6 +8,10 @@ ADD_EXECUTABLE(test
    unit_tests/tokenizer_test.cpp
 )
 
+ADD_EXECUTABLE(rshell
+   src/main.cpp
+)
+
 ADD_EXECUTABLE(executor_test
    unit_tests/executor_test.cpp
 )
