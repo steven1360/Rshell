@@ -8,12 +8,8 @@ ADD_EXECUTABLE(test
    unit_tests/tokenizer_test.cpp
 )
 
-ADD_EXECUTABLE(executor
-   header/Executor.h
-)
-
-ADD_EXECUTABLE(main
-   src/main.cpp
+ADD_EXECUTABLE(executor_test
+   unit_tests/executor_test.cpp
 )
 
 TARGET_LINK_LIBRARIES(test gtest)
