@@ -17,9 +17,9 @@ void executioner(std::string input){
 
 	if(pid = fork() == 0){										//child process. run execvp()
 		for(int i = 0; i < listOfTokens.size(); i++){
-			if(listOfTokens.at(i)->Identity == ExecToken){					//if current token is an ExecToken
+			if(listOfTokens.at(i)->id == ExecToken){					//if current token is an ExecToken
 				if(i < listOfTokens.size() - 1){					
-					if(listOfTokens.at(i + 1)->Identity == ArgToken){		//if next token is an ArgToken
+					if(listOfTokens.at(i + 1)->id == ArgToken){		//if next token is an ArgToken
 						char* argument = converter(listOfTokens.at(i+1);
 						execvp(listOfTokens.at(i), argument);			//execute command with argument
 					}
