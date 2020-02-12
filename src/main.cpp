@@ -6,10 +6,18 @@
 
 //"ls -a; echo test && mkdir hi || echo hello; git status"
 int main() {
-    std::vector<Token*> t = Tokenizer::makeTokens("echo sup"); 
-    for (int i = 0; i < t.size(); i++) {
-	      std::cout << "~~~TOKEN~~~:" << t.at(i)->val << ", id: " << t.at(i)->id  << std::endl;
+    std::cout << "$ ";
+    std::string input;
+
+    while (std::getline(std::cin, input) ) {
+	std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+	Executor ex(tokens);
+	ex.execute();
+	std::cout << "$ ";
     }
+<<<<<<< HEAD
     std::string a = "ls -a; echo test && mkdir hi || echo hello; git status";
 	executioner(a);
+=======
+>>>>>>> 5a7c8987b24331bd13721cc676356c22b3575119
 }
