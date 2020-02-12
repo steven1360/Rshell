@@ -95,11 +95,22 @@ class Tokenizer {
        	    }
 	   
 	     combineTokensWithQuotes(v, s);
-
+	     removeAllQuotes(v);    
              return v;
 
 	}
     private:
+	static void removeAllQuotes(std::vector<Token*>& v ) {
+	    for (unsigned i = 0; i < v.size(); i++) {
+		std::string& s = v.at(i)->val;
+		for (unsigned j = 0; j < s.size(); j++) {
+		    if ( s.at(j) == '"') {
+			s.erase(j, 1);
+		    }
+		}
+	    }
+
+	}
         static std::pair<std::string, std::string> getExecAndArg(const std::string& command) {
             std::string executable;
             std::string argument;
@@ -193,7 +204,7 @@ class Tokenizer {
             for (unsigned i = 0; i + 1 < quotationIndices.size(); i += 2) {
                 q.push( input.substr(quotationIndices.at(i), quotationIndices.at(i+1) - quotationIndices.at(i) + 1) );
             }
-            return q;
+            return q; //returns strings that contain quotes
         }
         
         static void combineTokensWithQuotes(std::vector<Token*> & v, const std::string& input) {
@@ -213,6 +224,8 @@ class Tokenizer {
                     if (temp.size() == 2) break;
                 }
 
+		
+		
                 combinedToken = new ArgToken(arguments.front());
                 arguments.pop();
 
@@ -223,6 +236,8 @@ class Tokenizer {
                 v.insert(temp.at(0), combinedToken);
             }
         }
+
+	
 
         static int findHashSymbol(const std::string& s) {
             //numQuotationsSofar even -> is a comment
