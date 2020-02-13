@@ -26,6 +26,10 @@ class Executor {
 	int i = 0;
         for (i = 0; i < size; i++) {
 
+	    if ( tokens.at(i)->val == "exit") {
+		exit(1);
+	    }
+
             if ( tokens.at(i)->id == Identity::EXECTOKEN) {
                 executable = tokens.at(i);
                 next = ( i+1 < size ) ? tokens.at(i+1) : nullptr;
