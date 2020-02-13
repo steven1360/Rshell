@@ -11,7 +11,7 @@ This program is a command line interface that is able to take in commands in the
 
 
 ## Diagram
-![GitHub Logo](/images/OMT.png)
+![GitHub Logo](/images/omt.png)
 
 ## Classes
 * `Token`, `ExecToken`, `ArgToken`,`BadToken` `ConnectorToken`, `Tokenizer`
