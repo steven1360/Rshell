@@ -81,7 +81,7 @@ class Executor {
 	    if (x < 0) {
 //		std::cout << "execvp failed" << std::endl;
 		prevCommandFailed = true;
-//		std::cout << "-bash: " << executable->val << ": command not found" << std::endl;
+		std::cout << "-bash: " << executable->val << ": command not found" << std::endl;
 
 	    }
 	    else {
@@ -102,10 +102,10 @@ class Executor {
                 argument = arg->val;
             }
 	
-	    if ( ! ( executable == "echo" || executable == "exit" || executable == "ls" || executable == "pwd" || executable == "git" || executable == "ls" || executable == "cat" )) {
-		std::cout << "-bash: " << executable << ": command not found" << std::endl;
-		return -1;
-	    }
+//	    if ( ! (executable == "mkdir" || executable == "clear" ||  executable == "echo" || executable == "exit" || executable == "ls" || executable == "pwd" || executable == "git" || executable == "ls" || executable == "cat" )) {
+//		std::cout << "-bash: " << executable << ": command not found" << std::endl;
+//		return -1;
+//	    }
 	
 	    
 		

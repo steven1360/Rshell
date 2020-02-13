@@ -9,7 +9,7 @@
 int main(int argv, char** argc) {
     std::string input;
     for (int i = 1; i < argv; i++) {
-	input = input + argc[i] + " ";
+	input = input + argc[i];
     }
     std::cout << "-----------------------------------------------------" << std::endl;
     std::cout << "input: " << input << std::endl;

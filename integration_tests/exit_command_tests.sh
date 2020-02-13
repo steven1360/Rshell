@@ -1,11 +1,10 @@
 #!/bin/sh
 
-INPUTS=("echo terry exit" "echo terry; exit;" )
+INPUTS=("echo terry exit" "echo terry && exit;" "echo test && echo one; pwd && exit && ls" 
+	"exit; echo output nothing" "ls; exit; echo yea")
 
 
-./command_test "${INPUTS[0]}"
-./command_test "${INPUTS[1]}"
-#./command_test "${INPUTS[2]}"
-#./command_test "${INPUTS[3]}"
-#./command_test "${INPUTS[4]}"
-
+for input in "${INPUTS[@]}"
+do
+    ./test "${input}"
+done

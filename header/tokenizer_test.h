@@ -77,9 +77,9 @@ TEST(TokenizerTest, validString_12) {
 }
 
 TEST(TokenizerTest, validString_13) {
-    std::string input = "ls #-a";
+    std::string input = "pwd && ls #-a";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
-    EXPECT_EQ(1, tokens.size());
+    EXPECT_EQ(3, tokens.size());
 }
 
 TEST(TokenizerTest, validString_14) {
@@ -95,10 +95,35 @@ TEST(TokenizerTest, validString_15) {
 }
 
 TEST(TokenizerTest, validString_16) {
-    std::string input = "ls; echo \"hi\" #&& mkdir \"folder\" # echo \"whatever\"      ";
+    std::string input = "ls; echo \"hi\" #&& mkdir \"folder\" # echo \"whatever\"      && pwd ";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
     EXPECT_EQ(4, tokens.size());
 }
+
+TEST(TokenizerTest, validString_17) {
+    std::string input = "ls -a; pwd;";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(5, tokens.size());
+}
+
+TEST(TokenizerTest, validString_18) {
+    std::string input = "cat -n example.txt";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(2, tokens.size());
+}
+
+TEST(TokenizerTest, validString_19) {
+    std::string input = "exit; test";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+TEST(TokenizerTest, validString_20) {
+    std::string input = "git status";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(2, tokens.size());
+}
+
 
 
 TEST(TokenizerTest, invalidString_1) {

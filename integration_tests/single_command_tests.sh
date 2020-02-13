@@ -1,8 +1,8 @@
 #!/bin/sh
 
-INPUTS=("echo truongformer" "ls" "pwd" "git status" "mkdir newDirectory" "ls -a" "cat -n testDirectory" "ls")
+INPUTS=("echo truongformer" "ls" "pwd" "git status" "mkdir newDirectory" "ls -a" "cat -n testDirectory" "ls" "exit invalid")
 
 for input in "${INPUTS[@]}"
 do
-        ./command_test ${input}
+        ./test "${input}"
 done
