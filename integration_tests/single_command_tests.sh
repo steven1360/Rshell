@@ -4,5 +4,5 @@ INPUTS=("echo truongformer" "ls" "pwd" "git status" "mkdir newDirectory" "ls -a"
 
 for input in "${INPUTS[@]}"
 do
-        ./test "${input}"
+        ./int_test "${input}"
 done

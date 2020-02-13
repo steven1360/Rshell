@@ -11,7 +11,7 @@ INPUTS=("echo terry && echo steven || ls"
 
 for input in "${INPUTS[@]}"
 do
-        ./test "${input}"
+        ./int_test "${input}"
 done
 
 

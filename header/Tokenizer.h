@@ -43,14 +43,24 @@ class Tokenizer {
 
             //Break up string by connectors
             for (unsigned i = 0; i < s.size(); i++) {
+                      //  std::cout << "~~~curr char~~~:" << s.at(i) << ":~~~curr char~~~" << std::endl;
+
                 if ( ( (i + 1) < s.size() ) && isAConnector( s.substr(i, 2) ) ) {
                     auto pair = getExecAndArg(removeWhitespace(command));
+			
+			
+			//REMOVE ME LATER
+		//	std::cout << "~~first pair~~~:" << pair.first << ":~~~first pair~~~" << std::endl;
+                  //      std::cout << "~~second pair~~~:" << pair.second << ":~~~second pair~~~" << std::endl;
+		//	std::cout << "Connector: " << s.substr(i, 2) << std::endl;
 
-                        if (!pair.first.empty()) 
+                        if (!pair.first.empty()  ) {
                             v.push_back( new ExecToken(pair.first) );
-                        if (!pair.second.empty()) 
-                            v.push_back( new ArgToken(pair.second) );
+			}
 
+                        if (!pair.second.empty() ) {
+                            v.push_back( new ArgToken(pair.second) );
+			}
                     v.push_back( new ConnectorToken( removeWhitespace( s.substr(i, 2) ) ) );
                     command.clear();
                     i++; //increment one more time bc connector 2 characters ==> read an extra char
@@ -111,10 +121,12 @@ class Tokenizer {
 	    }
 
 	}
+
         static std::pair<std::string, std::string> getExecAndArg(const std::string& command) {
             std::string executable;
             std::string argument;
             int locationOfFirstSpace = -1;
+
 
             //Look for first whitespace char in string
             for (unsigned i = 0; i < command.size(); i++) {
@@ -140,6 +152,10 @@ class Tokenizer {
             std::string str;
             unsigned i = 0;
             unsigned k ;
+	
+	   if ( isAllWhitespace(s)  ) {
+		return "";
+	   }
 
             for (i = 0; i < s.size(); i++) {
                 if (s.at(i) == ' ' ) {

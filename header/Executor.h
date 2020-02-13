@@ -21,9 +21,15 @@ class Executor {
 	int size = tokens.size();
 	int x = 1;
 	bool prevCommandFailed = false;
-
 //	std::cout << "size: " << tokens.size() << std::endl;
 	int i = 0;
+
+	Token* t = hasAdjacentConnectors();
+	if (t) {
+                std:: cout << "-bash: syntax error near unexpected token `" <<  t->val << "'" << std::endl;
+		return;
+	}	
+
         for (i = 0; i < size; i++) {
 
 	    if ( tokens.at(i)->val == "exit") {
@@ -47,6 +53,7 @@ class Executor {
 		}
             }
             else if ( tokens.at(i)->id == Identity::CONNECTORTOKEN ) {
+
 		if (prevCommandFailed) {
 		    prevCommandFailed = false;
 		    if (tokens.at(i)->val == "&&") {
@@ -85,7 +92,7 @@ class Executor {
 
 	    }
 	    else {
-//		std::cout << "execvp worked" << std::endl;
+//	i	std::cout << "execvp worked" << std::endl;
 	    }
  
         }      
@@ -154,6 +161,15 @@ class Executor {
             
             return strs;
         }
+
+	Token* hasAdjacentConnectors() {
+	    for (unsigned i = 0; i + 1 < tokens.size(); i++) {
+		if (tokens.at(i)->id == Identity::CONNECTORTOKEN && tokens.at(i+1)->id == Identity::CONNECTORTOKEN) {
+		    return tokens.at(i);
+		}
+	    }
+	    return nullptr;
+	}
 
 };
 
