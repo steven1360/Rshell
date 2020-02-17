@@ -7,169 +7,112 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stack>
+#include <queue>
 
 class Executor {
     private:
         std::vector<Token*> tokens;
+        std::vector<Token*> postfix;
     public:
         Executor(const std::vector<Token*>& v) {
 		tokens = v;
  	}
 	void execute() {
-        Token* executable = nullptr;
-        Token* next = nullptr;
-	int size = tokens.size();
-	int x = 1;
-	bool prevCommandFailed = false;
-//	std::cout << "size: " << tokens.size() << std::endl;
-	int i = 0;
-
-	Token* t = hasAdjacentConnectors();
-	if (t) {
-                std:: cout << "-bash: syntax error near unexpected token `" <<  t->val << "'" << std::endl;
-		return;
-	}	
-
-        for (i = 0; i < size; i++) {
-
-	    if ( tokens.at(i)->val == "exit") {
-		exit(1);
-	    }
-
-            if ( tokens.at(i)->id == Identity::EXECTOKEN) {
-                executable = tokens.at(i);
-                next = ( i+1 < size ) ? tokens.at(i+1) : nullptr;
-
-                if (next && next->id == Identity::ARGTOKEN) {
-                    x = execute(executable, next);
-		    i++;
-                }
-		//command either ends with a connector or an argument
-		else if (next && next->id == Identity::CONNECTORTOKEN) {
-		    x = execute(executable, nullptr);
+		postfix = shuntingYard();
+		for (Token* t : postfix) {
+			std::cout << "~~~:" << t->getString() << ":~~~" << std::endl;
 		}
-		else if (!next) {
-		    x = execute(executable, nullptr);
-		}
-            }
-            else if ( tokens.at(i)->id == Identity::CONNECTORTOKEN ) {
 
-		if (prevCommandFailed) {
-		    prevCommandFailed = false;
-		    if (tokens.at(i)->val == "&&") {
-			i++; //skip next token
-			continue;
-		    }
-		    else if (tokens.at(i)->val == "||") {
-			continue;
-		    }
-		    else if (tokens.at(i)->val == ";") {
-			continue;
-		    } 
-		}
-		else {
-		    if (tokens.at(i)->val == "||") {
-			i++; //skips next token.
-			continue;
-		    }	
-		    else {
-			continue;
-		    }	
-		}
-            }
-	    else if ( tokens.at(i)->id == Identity::ARGTOKEN ) {
-		continue;
-	    }
-	    else if (tokens.at(i)->id == Identity::BADTOKEN) {
-		std:: cout << "-bash: syntax error near unexpected token `" <<  tokens.at(i)->val << "'" << std::endl;
-	    }
-		
-//	    std::cout << "i:  " << i << "     , x: " << x <<  std::endl;
-	    if (x < 0) {
-//		std::cout << "execvp failed" << std::endl;
-		prevCommandFailed = true;
-		std::cout << "-bash: " << executable->val << ": command not found" << std::endl;
+		Token* root = createTree();
+		root->execute();
 
-	    }
-	    else {
-//	i	std::cout << "execvp worked" << std::endl;
-	    }
- 
-        }      
+
     }
-    private:
-         int execute(Token* ex, Token* arg) {
-            std::string executable;
-            std::string argument;
-            
-            if (ex) {
-                executable = ex->val;
-            }
-            if (arg) {
-                argument = arg->val;
-            }
-	
-//	    if ( ! (executable == "mkdir" || executable == "clear" ||  executable == "echo" || executable == "exit" || executable == "ls" || executable == "pwd" || executable == "git" || executable == "ls" || executable == "cat" )) {
-//		std::cout << "-bash: " << executable << ": command not found" << std::endl;
-//		return -1;
-//	    }
-	
-	    
-		
-            int* status;
-            std::vector<std::string> parsedArgs = parseArguments(argument);
-	
-            char* command[parsedArgs.size()+1];
-            int n = 0;
+	private:
 
-            command[n] =  const_cast<char*>( executable.c_str() ) ;
-            for (int j = 0; j < parsedArgs.size(); j++) {
-                command[++n] = const_cast<char*>( parsedArgs.at(j).c_str() );
-            }
-            command[n+1] = NULL;
-            pid_t process = fork();
-           
-            if(process == 0){
-        	return execvp(command[0], command);
+		std::vector<Token*> shuntingYard() {
+			std::queue<Token*> out;
+			std::stack<Token*> ops;
+			std::vector<Token*> postfix;
 
-            }
-            else if (process < 0) {
-                std::cout << "fork() failed" << std::endl;
-            }
-            else {
-         	waitpid(0, status, 0);
-            }
-        }
+			for (Token* t : tokens) {
+				if (t->getIdentity() == ID::COMMAND) {
+					out.push(t);
+				}
+				if (t->getIdentity() == ID::CONNECTOR && t->getString() != ")" && t->getString() != "(" ) {
+					ops.push(t);
+				}
 
-        std::vector<std::string> parseArguments(const std::string& s) {
-            std::vector<std::string> strs;
-            std::string currStr;
-            
-            for (unsigned i = 0; i < s.size(); i++) {
-                if (s.at(i) != ' ') {
-                    currStr += s.at(i);
-                }
-                else {
-                    strs.push_back(currStr);
-                    currStr.clear();
-                }
-            }
-            
-            if (!currStr.empty()) {
-                strs.push_back(currStr);
-            }
-            
-            return strs;
-        }
+				if (t->getString() == "(") {
+					ops.push(t);
+				}
+				if (t->getString() == ")") {
+					while (ops.top()->getString() != "(") {
 
-	Token* hasAdjacentConnectors() {
-	    for (unsigned i = 0; i + 1 < tokens.size(); i++) {
-		if (tokens.at(i)->id == Identity::CONNECTORTOKEN && tokens.at(i+1)->id == Identity::CONNECTORTOKEN) {
-		    return tokens.at(i);
+						out.push( ops.top() );
+						ops.pop();
+					}
+					if ( ops.top()->getString() == "(") {
+						ops.pop();
+					}
+				}
+
+			}
+
+			while (!ops.empty()) {
+				out.push( ops.top() );
+				ops.pop();
+			}
+
+			while (!out.empty()) {
+				postfix.push_back( out.front() );
+				out.pop();
+			}
+
+			return postfix;
 		}
-	    }
-	    return nullptr;
-	}
+
+		Token* createTree() {
+			std::stack<Token*> s;
+			Token* currToken = nullptr;
+
+
+			for (unsigned i = 0; i < postfix.size(); i++) {
+
+				currToken = postfix.at(i);
+
+				if (currToken->getIdentity() == ID::COMMAND) {
+					s.push(currToken);
+				}
+				else if (currToken->getIdentity() == ID::CONNECTOR) {
+					Token* right =  s.top();
+					s.pop();
+					Token* left = s.top();
+					s.pop();
+
+					currToken->setLeft(left);
+					currToken->setRight(right);
+
+					s.push(currToken);
+				}
+
+			}
+
+			return s.top();
+
+		}
+
+		void inOrder(Token* t) {
+			if (t) {
+				inOrder(t->left);
+				std::cout << t->getString() << " ";
+				inOrder(t->right);
+			}
+		}
+
+
+
 
 };
 

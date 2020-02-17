@@ -2,18 +2,23 @@
 #define TOKEN_H
 #include <string>
 
-enum Identity {
-    ARGTOKEN,
-    BADTOKEN,
-    CONNECTORTOKEN,
-    EXECTOKEN
+enum ID {
+	COMMAND,
+	CONNECTOR,
 };
 
 class Token {
+	public:
+	    Token* left = nullptr;
+        Token* right = nullptr;
+        ID id;
     public:
-        std::string val;
-        Token(std::string s) : val(s) {}
-        Identity id;
+        Token() {}
+        virtual int execute(bool skipNextCommand = false) = 0;
+        virtual std::string getString() = 0;
+        virtual void setLeft(Token* t) { left = t; }
+        virtual void setRight(Token* t) { right = t; }
+        virtual ID getIdentity() = 0;
 };
 
 #endif
