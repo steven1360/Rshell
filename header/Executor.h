@@ -20,6 +20,7 @@ class Executor {
  	}
 	void execute() {
 		postfix = shuntingYard();
+
 		for (Token* t : postfix) {
 			std::cout << "~~~:" << t->getString() << ":~~~" << std::endl;
 		}
@@ -40,7 +41,7 @@ class Executor {
 				if (t->getIdentity() == ID::COMMAND) {
 					out.push(t);
 				}
-				if (t->getIdentity() == ID::CONNECTOR && t->getString() != ")" && t->getString() != "(" ) {
+				if ( (t->getIdentity() == ID::CONNECTOR || t->getIdentity() == ID::MERGED ) && t->getString() != ")" && t->getString() != "(" ) {
 					ops.push(t);
 				}
 
@@ -82,7 +83,7 @@ class Executor {
 
 				currToken = postfix.at(i);
 
-				if (currToken->getIdentity() == ID::COMMAND) {
+				if (currToken->getIdentity() == ID::COMMAND || currToken->getIdentity() == ID::MERGED) {
 					s.push(currToken);
 				}
 				else if (currToken->getIdentity() == ID::CONNECTOR) {

@@ -27,8 +27,8 @@ class CommandToken : public Token {
             return ID::COMMAND;
         }
         
-        virtual int execute(bool skipNextCommand) {
-            if (skipNextCommand) return 1;
+        virtual int execute() {
+
 
             std::vector<std::string> arguments = parseArguments(argument);
             int cStringSize = arguments.size() + 2;  // +1 for exec string, +1 for null terminated string

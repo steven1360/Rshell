@@ -5,6 +5,7 @@
 enum ID {
 	COMMAND,
 	CONNECTOR,
+    MERGED
 };
 
 class Token {
@@ -14,7 +15,7 @@ class Token {
         ID id;
     public:
         Token() {}
-        virtual int execute(bool skipNextCommand = false) = 0;
+        virtual int execute() = 0;
         virtual std::string getString() = 0;
         virtual void setLeft(Token* t) { left = t; }
         virtual void setRight(Token* t) { right = t; }

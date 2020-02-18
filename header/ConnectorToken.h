@@ -23,22 +23,21 @@ class ConnectorToken : public Token {
         }
 
 
-        virtual int execute(bool skipNextCommand = false) {
+        virtual int execute() {
             bool leftStatus = 0;
             bool rightStatus = 0;
 
 
             if (left) {
-                leftStatus = left->execute(skipNextCommand);
-                skipNextCommand = false;
+                leftStatus = left->execute();
             }
 
 
             if (value == "&&" && !leftStatus) {
-                skipNextCommand = true;
+                return 0;
             }
             else if (value == "||" && leftStatus) {
-                skipNextCommand = true;
+                return 1;
             }
             else if (value == ";") {
 
@@ -46,8 +45,7 @@ class ConnectorToken : public Token {
 
 
             if (right) {
-                rightStatus = right->execute(skipNextCommand);
-                skipNextCommand = false;
+                rightStatus = right->execute();
             }
 
             if (value == "&&") {

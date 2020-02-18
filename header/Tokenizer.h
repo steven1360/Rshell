@@ -6,6 +6,7 @@
 #include <iostream> 
 #include "CommandToken.h"
 #include "ConnectorToken.h"
+#include "MergedToken.h"
 
 class Tokenizer {
     public:
@@ -62,6 +63,7 @@ class Tokenizer {
                         command += s.at(i);
                     }
                 }
+                //Found parentheses
                 else if ( s.at(i) == '(' || s.at(i) == ')') {
                     std::string str;
                     str.push_back(s.at(i));
