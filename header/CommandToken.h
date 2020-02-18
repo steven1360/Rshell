@@ -7,7 +7,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+#include <stdio.h>
+#include <string.h>
 
 class CommandToken : public Token {
     private:
@@ -39,6 +40,15 @@ class CommandToken : public Token {
             for (const std::string& str : arguments) {
                 command[++index] = const_cast<char*>( str.c_str() );
             }
+//EXIT COMMAND==================================
+            char exitS[] = "exit";
+            if(strcmp(command[0], exitS) == 0){
+                exit(0);
+            }
+
+//=============================================
+
+
             command[index + 1] = NULL;
 
 
