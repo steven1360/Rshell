@@ -41,8 +41,19 @@ class Executor {
 				if (t->getIdentity() == ID::COMMAND) {
 					out.push(t);
 				}
-				if ( (t->getIdentity() == ID::CONNECTOR || t->getIdentity() == ID::MERGED ) && t->getString() != ")" && t->getString() != "(" ) {
-					ops.push(t);
+
+				if ( t->getIdentity() == ID::CONNECTOR && t->getString() != ")" && t->getString() != "(" ) {
+					if (ops.empty()) {
+						ops.push(t);
+					}
+					else if (ops.top()->getString() != "(") {
+						out.push( ops.top() );
+						ops.pop();
+						ops.push(t);
+					}
+					else if (ops.top()->getString() == "(") {
+						ops.push(t);
+					}
 				}
 
 				if (t->getString() == "(") {
@@ -61,6 +72,8 @@ class Executor {
 
 			}
 
+
+
 			while (!ops.empty()) {
 				out.push( ops.top() );
 				ops.pop();
@@ -70,6 +83,7 @@ class Executor {
 				postfix.push_back( out.front() );
 				out.pop();
 			}
+
 
 			return postfix;
 		}
@@ -83,7 +97,7 @@ class Executor {
 
 				currToken = postfix.at(i);
 
-				if (currToken->getIdentity() == ID::COMMAND || currToken->getIdentity() == ID::MERGED) {
+				if (currToken->getIdentity() == ID::COMMAND ) {
 					s.push(currToken);
 				}
 				else if (currToken->getIdentity() == ID::CONNECTOR) {

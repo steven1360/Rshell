@@ -6,7 +6,6 @@
 #include <iostream> 
 #include "CommandToken.h"
 #include "ConnectorToken.h"
-#include "MergedToken.h"
 
 class Tokenizer {
     public:
