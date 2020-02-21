@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../header/tokenizer_test.h"
+#include "../header/unit_test.h"
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv); 

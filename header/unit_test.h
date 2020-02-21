@@ -123,6 +123,11 @@ TEST(TokenizerTest, validString_20) {
     EXPECT_EQ(1, tokens.size());
 }
 
+TEST(TokenizerTest, validString_21) {
+    std::string input = "#git status";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(0, tokens.size());
+}
 
 
 TEST(TokenizerTest, invalidString_1) {
@@ -201,6 +206,12 @@ TEST(TokenizerTest, invalidString_13) {
     std::string input = "                               e ";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
     EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, invalidString_14) {
+    std::string input = "\n";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(0, tokens.size());
 }
 
 

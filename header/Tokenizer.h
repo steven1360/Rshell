@@ -16,6 +16,10 @@ class Tokenizer {
             std::string command;
             bool quoteMarkFound = false;
 
+            if (s == "\n") {
+                return v;
+            }
+
 
             for (unsigned i = 0; i < s.size(); i++) {
 
