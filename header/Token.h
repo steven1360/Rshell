@@ -5,7 +5,6 @@
 enum ID {
 	COMMAND,
 	CONNECTOR,
-    MERGED
 };
 
 class Token {

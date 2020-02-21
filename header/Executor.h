@@ -19,12 +19,12 @@ class Executor {
 		tokens = v;
  	}
 	void execute() {
-		postfix = shuntingYard();
-
-		for (Token* t : postfix) {
-			std::cout << "~~~:" << t->getString() << ":~~~" << std::endl;
+		if (!hasValidParentheses()) {
+			std::cout << "Error: Invalid Parentheses" << std::endl;
+			return;
 		}
 
+		postfix = shuntingYard();
 		Token* root = createTree();
 		root->execute();
 
@@ -41,8 +41,19 @@ class Executor {
 				if (t->getIdentity() == ID::COMMAND) {
 					out.push(t);
 				}
-				if ( (t->getIdentity() == ID::CONNECTOR || t->getIdentity() == ID::MERGED ) && t->getString() != ")" && t->getString() != "(" ) {
-					ops.push(t);
+
+				if ( t->getIdentity() == ID::CONNECTOR && t->getString() != ")" && t->getString() != "(" ) {
+					if (ops.empty()) {
+						ops.push(t);
+					}
+					else if (ops.top()->getString() != "(") {
+						out.push( ops.top() );
+						ops.pop();
+						ops.push(t);
+					}
+					else if (ops.top()->getString() == "(") {
+						ops.push(t);
+					}
 				}
 
 				if (t->getString() == "(") {
@@ -61,6 +72,8 @@ class Executor {
 
 			}
 
+
+
 			while (!ops.empty()) {
 				out.push( ops.top() );
 				ops.pop();
@@ -70,6 +83,7 @@ class Executor {
 				postfix.push_back( out.front() );
 				out.pop();
 			}
+
 
 			return postfix;
 		}
@@ -83,7 +97,7 @@ class Executor {
 
 				currToken = postfix.at(i);
 
-				if (currToken->getIdentity() == ID::COMMAND || currToken->getIdentity() == ID::MERGED) {
+				if (currToken->getIdentity() == ID::COMMAND ) {
 					s.push(currToken);
 				}
 				else if (currToken->getIdentity() == ID::CONNECTOR) {
@@ -110,6 +124,34 @@ class Executor {
 				std::cout << t->getString() << " ";
 				inOrder(t->right);
 			}
+		}
+
+		bool hasValidParentheses() {
+			//Stores locations of parantheses
+			std::vector<int> leftParentheses;
+			std::vector<int> rightParentheses;
+
+			for (unsigned i = 0; i < tokens.size(); i++) {
+				if (tokens.at(i)->getString() == "(") {
+					leftParentheses.push_back(i);
+				}
+				else if (tokens.at(i)->getString() == ")") {
+					rightParentheses.push_back(i);
+				}
+			}
+
+			if (leftParentheses.size() != rightParentheses.size()) {
+				return false;
+			}
+
+			for (unsigned i = 0; i < leftParentheses.size(); i++) {
+				//left parenthesis position should always be less than right parenthesis
+				if (leftParentheses.at(i) > rightParentheses.at(i)) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 
