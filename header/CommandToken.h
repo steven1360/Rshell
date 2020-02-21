@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
+#include "TestCommand.h"
 
 class CommandToken : public Token {
     private:
@@ -45,10 +46,15 @@ class CommandToken : public Token {
             if(strcmp(command[0], exitS) == 0){
                 exit(0);
             }
-
-//=============================================
-
-
+//TEST COMMAND==================================
+	    char testS[] = "test";
+	    if(strcmp(command[0], testS) == 0){
+		std::cout << "Test command has been found" << std::endl;
+		//checks next string to see if specified test mentioned or general "-e"
+		//ask steven how to check
+		//deleted, did not work
+	    }
+//==============================================
             command[index + 1] = NULL;
 
 
