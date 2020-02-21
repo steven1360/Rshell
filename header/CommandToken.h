@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
-#include "TestCommand.h"
+#include <cstring>
 
 class CommandToken : public Token {
     private:
@@ -50,9 +50,40 @@ class CommandToken : public Token {
 	    char testS[] = "test";
 	    if(strcmp(command[0], testS) == 0){
 		std::cout << "Test command has been found" << std::endl;
-		//checks next string to see if specified test mentioned or general "-e"
-		//ask steven how to check
-		//deleted, did not work
+	
+	        std::string exists = "-e";
+		std::string isFile = "-f";
+		std::string isDir = "-d";
+		std::string arg = "filler";		
+		std::string arg2 = "filler";
+
+		if(arguments.empty() == false){//if arguments vector is not empty, fill with first argument
+			arg = arguments.at(0);
+			if(arguments.size() > 1){
+				arg2 = arguments.at(1);
+			}
+		}
+		if(arguments.empty() == true){//test -e will run
+			//no arguments
+			std::cout << "no arguments" << std::endl;
+		}
+		else if(arg != exists && arg != isFile && arg != isDir && arg != "filler"){
+			//no -e but still runs exists
+			std::cout << "exists" << std:: endl;
+		}
+		else if(arg == exists){//test -e will run
+			//run exists
+			std::cout << "exists" << std::endl; 
+		}	
+		else if(arg == isFile){//test -f will run
+			//run isFile
+			std::cout << "isFile" << std::endl;
+		}
+		else if(arg == isDir){//test -d will run
+			//run isDir
+			std::cout << "isDir" << std::endl;
+		}
+	
 	    }
 //==============================================
             command[index + 1] = NULL;
