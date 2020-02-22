@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <cstring>
+#include <sys/stat.h>
+
 
 class CommandToken : public Token {
     private:
@@ -69,19 +71,57 @@ class CommandToken : public Token {
 		}
 		else if(arg != exists && arg != isFile && arg != isDir && arg != "filler"){
 			//no -e but still runs exists
-			std::cout << "exists" << std:: endl;
+			//std::cout << "exists" << arg << " " << std:: endl;
+			struct stat buf;
+			stat(arg.c_str(), &buf);
+                        if S_ISREG(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else if S_ISDIR(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else{
+                                std::cout << "(False)" << std::endl;
+                        }
 		}
 		else if(arg == exists){//test -e will run
 			//run exists
-			std::cout << "exists" << std::endl; 
+			//std::cout << "exists" << arg << " " << arg2 << std::endl; 
+			struct stat buf;
+                        stat(arg2.c_str(), &buf);
+                        if S_ISREG(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+			else if S_ISDIR(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else{
+                                std::cout << "(False)" << std::endl;
+                        }
 		}	
 		else if(arg == isFile){//test -f will run
 			//run isFile
-			std::cout << "isFile" << std::endl;
+			//std::cout << "isFile" << arg << " " << arg2 << std::endl;
+			struct stat buf;
+			stat(arg2.c_str(), &buf);
+			if S_ISREG(buf.st_mode){
+				std::cout << "(True)" << std::endl;
+			}
+			else{
+				std::cout << "(False)" << std::endl;
+			}
 		}
 		else if(arg == isDir){//test -d will run
 			//run isDir
-			std::cout << "isDir" << std::endl;
+			//std::cout << "isDir" << arg << " " << arg2 << std::endl;
+			struct stat buf;
+                        stat(arg2.c_str(), &buf);
+                        if S_ISDIR(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else{
+                                std::cout << "(False)" << std::endl;
+                        }
 		}
 	
 	    }
