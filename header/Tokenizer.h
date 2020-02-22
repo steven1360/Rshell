@@ -15,6 +15,7 @@ class Tokenizer {
             std::vector<Token*> v;
             std::string command;
             bool quoteMarkFound = false;
+            bool bracketFound = false;
 
             if (s == "\n") {
                 return v;
@@ -29,8 +30,11 @@ class Tokenizer {
                 if (!quoteMarkFound && s.at(i) == '"') {
                     quoteMarkFound = true;
                 }
+                else if ( !quoteMarkFound && !bracketFound && s.at(i) == ']') {
+                    bracketFound = true;
+                }
                 //found connector (&& or ||)
-                else if (  (i + 1 < s.size()) && isAConnector( s.substr(i, 2) ) && !quoteMarkFound ) {
+                else if (  (i + 1 < s.size()) && isAConnector( s.substr(i, 2) ) && !quoteMarkFound && !bracketFound ) {
 
 
                     if (!pair.first.empty() || !pair.second.empty()) {
@@ -44,7 +48,7 @@ class Tokenizer {
 
                 }
                 //found semicolon
-                else if ( s.at(i) == ';' && !quoteMarkFound) {
+                else if ( s.at(i) == ';' && !quoteMarkFound && !bracketFound ) {
 
 
                     if (!pair.first.empty() || !pair.second.empty()) {
@@ -65,6 +69,11 @@ class Tokenizer {
                     else {
                         command += s.at(i);
                     }
+                }
+                else if (bracketFound) {
+                    bracketFound = false;
+                    v.push_back( new CommandToken( "test", pair.second) );
+                    command.clear();
                 }
                 //Found parentheses
                 else if ( s.at(i) == '(' || s.at(i) == ')') {

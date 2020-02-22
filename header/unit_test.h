@@ -299,3 +299,37 @@ TEST(TokenizerTest, Parentheses14) {
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
     EXPECT_EQ(7, tokens.size());
 }
+
+
+
+TEST(TokenizerTest, usingTestCommand1) {
+    std::string input = "test -e file.cpp && echo one";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+
+TEST(TokenizerTest, usingTestCommand2) {
+    std::string input = "[-f file.cpp] && echo one";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+
+TEST(TokenizerTest, usingTestCommand3) {
+    std::string input = "echo \"I am not a test command but just a comment [-e somefile.cpp]\" ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, usingTestCommand4) {
+    std::string input = " [-e file.h] && [ file.cpp ] ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+TEST(TokenizerTest, usingTestCommand5) {
+    std::string input = " echo \" echo:) :) [-e file.h] \" && [ file.cpp ] ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
