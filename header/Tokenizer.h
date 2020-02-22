@@ -25,12 +25,14 @@ class Tokenizer {
             for (unsigned i = 0; i < s.size(); i++) {
 
                 auto pair = getExecAndArg(command);
-            
+                // std::cout << "pair first:" << pair.first << ":pair first" << std::endl;
+                // std::cout << "pair second:" << pair.second << ":pair second" << std::endl;
+
                 //Found quotation mark
                 if (!quoteMarkFound && s.at(i) == '"') {
                     quoteMarkFound = true;
                 }
-                else if ( !quoteMarkFound && !bracketFound && s.at(i) == ']') {
+                else if ( !quoteMarkFound && !bracketFound && s.at(i) == '[') {
                     bracketFound = true;
                 }
                 //found connector (&& or ||)
@@ -71,9 +73,14 @@ class Tokenizer {
                     }
                 }
                 else if (bracketFound) {
-                    bracketFound = false;
-                    v.push_back( new CommandToken( "test", pair.second) );
-                    command.clear();
+                    if (s.at(i) == ']' ) {
+                        bracketFound = false;
+                        v.push_back( new CommandToken( "test", removeWhitespace(command) ) );
+                        command.clear();
+                    }
+                    else {
+                        command += s.at(i);
+                    }
                 }
                 //Found parentheses
                 else if ( s.at(i) == '(' || s.at(i) == ')') {

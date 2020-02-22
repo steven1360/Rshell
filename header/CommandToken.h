@@ -50,85 +50,10 @@ class CommandToken : public Token {
                 exit(0);
             }
 
-//TEST COMMAND==================================
-	    char testS[] = "test";
-	    if(strcmp(command[0], testS) == 0){
-			
-	      std::string exists = "-e";
-		    std::string isFile = "-f";
-		    std::string isDir = "-d";
-		    std::string arg = "filler";		
-		    std::string arg2 = "filler";
-
-		if(arguments.empty() == false){//if arguments vector is not empty, fill with first argument
-			arg = arguments.at(0);
-			if(arguments.size() > 1){
-				arg2 = arguments.at(1);
-			}
-		}
-		if(arguments.empty() == true){//test -e will run
-			//no arguments
-			std::cout << "no arguments" << std::endl;
-		}
-		else if(arg != exists && arg != isFile && arg != isDir && arg != "filler"){
-			//no -e but still runs exists
-			//std::cout << "exists" << arg << " " << std:: endl;
-			struct stat buf;
-			stat(arg.c_str(), &buf);
-                        if S_ISREG(buf.st_mode){
-                                std::cout << "(True)" << std::endl;
-                        }
-                        else if S_ISDIR(buf.st_mode){
-                                std::cout << "(True)" << std::endl;
-                        }
-                        else{
-                                std::cout << "(False)" << std::endl;
-                        }
-		}
-		else if(arg == exists){//test -e will run
-			//run exists
-			//std::cout << "exists" << arg << " " << arg2 << std::endl; 
-			struct stat buf;
-                        stat(arg2.c_str(), &buf);
-                        if S_ISREG(buf.st_mode){
-                                std::cout << "(True)" << std::endl;
-                        }
-			else if S_ISDIR(buf.st_mode){
-                                std::cout << "(True)" << std::endl;
-                        }
-                        else{
-                                std::cout << "(False)" << std::endl;
-                        }
-		}	
-		else if(arg == isFile){//test -f will run
-			//run isFile
-			//std::cout << "isFile" << arg << " " << arg2 << std::endl;
-			struct stat buf;
-			stat(arg2.c_str(), &buf);
-			if S_ISREG(buf.st_mode){
-				std::cout << "(True)" << std::endl;
-			}
-			else{
-				std::cout << "(False)" << std::endl;
-			}
-		}
-		else if(arg == isDir){//test -d will run
-			//run isDir
-			//std::cout << "isDir" << arg << " " << arg2 << std::endl;
-			struct stat buf;
-                        stat(arg2.c_str(), &buf);
-                        if S_ISDIR(buf.st_mode){
-                                std::cout << "(True)" << std::endl;
-                        }
-                        else{
-                                std::cout << "(False)" << std::endl;
-                        }
-		}
-	
-	    }
-//==============================================
-
-         
+            char testS[] = "test";
+            if (strcmp(command[0], testS) == 0) {
+                return executeTest(arguments);
+            }
 
 
             int status;
@@ -182,6 +107,63 @@ class CommandToken : public Token {
 
             return arguments;
         }
-};
+
+        bool executeTest(const std::vector<std::string> arguments) {
+            struct stat buf;
+            std::string flag;
+            std::string path;
+
+            if ( arguments.size() == 2 ) {
+                flag = arguments.at(0);
+                path = arguments.at(1);
+                stat(arguments.at(1).c_str() , &buf);
+            }
+            else if ( arguments.size() == 1 ) {
+                path = arguments.at(0);
+                stat(arguments.at(0).c_str(), &buf);
+            }
+
+            //Check if valid flag
+            if ( !flagIsValid(flag) ) {
+                std::cout << "Invalid Flag" << std::endl;
+                return 0;
+            }
+
+
+            if (cmpFlagAndPath(flag, path, &buf) ) {
+                std::cout << "(True)" << std::endl;
+                return 1;
+            }
+            else {
+                std::cout << "(False)" << std::endl;
+                return 0;
+            }
+        }
+
+        bool cmpFlagAndPath(const std::string& flag, const std::string& path, struct stat* buf) {
+            bool isAFile = S_ISREG(buf->st_mode);
+            bool isADir =  S_ISDIR(buf->st_mode);
+
+            if ( flag == "-f" && isAFile ) {
+                return true;
+            }
+            else if ( flag == "-d" && isADir ) {
+                return true;
+            }
+            else if ( ( flag.empty() || flag == "-e") && (isADir || isAFile) ) {
+                return true;
+            }
+
+            return false;
+        }
+
+        bool flagIsValid(const std::string& s) {
+
+            if ( s == "-f" || s == "-d" || s== "-e" ) {
+                return true;
+            }
+            return false;
+        }
+    };
 
 #endif
