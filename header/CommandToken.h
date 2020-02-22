@@ -43,21 +43,22 @@ class CommandToken : public Token {
             for (const std::string& str : arguments) {
                 command[++index] = const_cast<char*>( str.c_str() );
             }
-//EXIT COMMAND==================================
+            command[index + 1] = NULL;
+            
             char exitS[] = "exit";
             if(strcmp(command[0], exitS) == 0){
                 exit(0);
             }
+
 //TEST COMMAND==================================
 	    char testS[] = "test";
 	    if(strcmp(command[0], testS) == 0){
-		std::cout << "Test command has been found" << std::endl;
-	
-	        std::string exists = "-e";
-		std::string isFile = "-f";
-		std::string isDir = "-d";
-		std::string arg = "filler";		
-		std::string arg2 = "filler";
+			
+	      std::string exists = "-e";
+		    std::string isFile = "-f";
+		    std::string isDir = "-d";
+		    std::string arg = "filler";		
+		    std::string arg2 = "filler";
 
 		if(arguments.empty() == false){//if arguments vector is not empty, fill with first argument
 			arg = arguments.at(0);
@@ -126,7 +127,8 @@ class CommandToken : public Token {
 	
 	    }
 //==============================================
-            command[index + 1] = NULL;
+
+         
 
 
             int status;
