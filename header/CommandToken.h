@@ -9,6 +9,9 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
+#include <cstring>
+#include <sys/stat.h>
+
 
 class CommandToken : public Token {
     private:
@@ -40,13 +43,92 @@ class CommandToken : public Token {
             for (const std::string& str : arguments) {
                 command[++index] = const_cast<char*>( str.c_str() );
             }
+            command[index + 1] = NULL;
             
             char exitS[] = "exit";
             if(strcmp(command[0], exitS) == 0){
                 exit(0);
             }
 
-            command[index + 1] = NULL;
+//TEST COMMAND==================================
+	    char testS[] = "test";
+	    if(strcmp(command[0], testS) == 0){
+			
+	      std::string exists = "-e";
+		    std::string isFile = "-f";
+		    std::string isDir = "-d";
+		    std::string arg = "filler";		
+		    std::string arg2 = "filler";
+
+		if(arguments.empty() == false){//if arguments vector is not empty, fill with first argument
+			arg = arguments.at(0);
+			if(arguments.size() > 1){
+				arg2 = arguments.at(1);
+			}
+		}
+		if(arguments.empty() == true){//test -e will run
+			//no arguments
+			std::cout << "no arguments" << std::endl;
+		}
+		else if(arg != exists && arg != isFile && arg != isDir && arg != "filler"){
+			//no -e but still runs exists
+			//std::cout << "exists" << arg << " " << std:: endl;
+			struct stat buf;
+			stat(arg.c_str(), &buf);
+                        if S_ISREG(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else if S_ISDIR(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else{
+                                std::cout << "(False)" << std::endl;
+                        }
+		}
+		else if(arg == exists){//test -e will run
+			//run exists
+			//std::cout << "exists" << arg << " " << arg2 << std::endl; 
+			struct stat buf;
+                        stat(arg2.c_str(), &buf);
+                        if S_ISREG(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+			else if S_ISDIR(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else{
+                                std::cout << "(False)" << std::endl;
+                        }
+		}	
+		else if(arg == isFile){//test -f will run
+			//run isFile
+			//std::cout << "isFile" << arg << " " << arg2 << std::endl;
+			struct stat buf;
+			stat(arg2.c_str(), &buf);
+			if S_ISREG(buf.st_mode){
+				std::cout << "(True)" << std::endl;
+			}
+			else{
+				std::cout << "(False)" << std::endl;
+			}
+		}
+		else if(arg == isDir){//test -d will run
+			//run isDir
+			//std::cout << "isDir" << arg << " " << arg2 << std::endl;
+			struct stat buf;
+                        stat(arg2.c_str(), &buf);
+                        if S_ISDIR(buf.st_mode){
+                                std::cout << "(True)" << std::endl;
+                        }
+                        else{
+                                std::cout << "(False)" << std::endl;
+                        }
+		}
+	
+	    }
+//==============================================
+
+         
 
 
             int status;
