@@ -24,6 +24,10 @@ class Executor {
 			return;
 		}
 
+		if (tokens.empty()) {
+			return;
+		}
+
 		postfix = shuntingYard();
 		Token* root = createTree();
 		root->execute();

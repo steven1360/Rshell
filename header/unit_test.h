@@ -1,5 +1,4 @@
-#ifndef TOKENIZER_TEST_H
-#define TOKENIZER_TEST_H
+#pragma once
 #include "gtest/gtest.h"
 #include "Tokenizer.h"
 
@@ -124,6 +123,11 @@ TEST(TokenizerTest, validString_20) {
     EXPECT_EQ(1, tokens.size());
 }
 
+TEST(TokenizerTest, validString_21) {
+    std::string input = "#git status";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(0, tokens.size());
+}
 
 
 TEST(TokenizerTest, invalidString_1) {
@@ -204,6 +208,128 @@ TEST(TokenizerTest, invalidString_13) {
     EXPECT_EQ(1, tokens.size());
 }
 
+TEST(TokenizerTest, invalidString_14) {
+    std::string input = "\n";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(0, tokens.size());
+}
 
-#endif
 
+TEST(TokenizerTest, Parentheses1) {
+    std::string input = "echo A && (echo B || echo C)";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(7, tokens.size());
+}
+
+
+TEST(TokenizerTest, Parentheses2) {
+    std::string input = "((echo A || (echo D)) &&  (echo B || echo C))";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(15, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses3) {
+    std::string input = "( echo test )";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses4) {
+    std::string input = "( echo test ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(2, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses5) {
+    std::string input = " echo test )";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(2, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses6) {
+    std::string input = " ( ( (  echo test )";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(5, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses7) {
+    std::string input = " ) echo one && ) echo two ( (";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(7, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses8) {
+    std::string input = "(";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses9) {
+    std::string input = ")";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses10) {
+    std::string input = "     )  ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses11) {
+    std::string input = "()()()()";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(8, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses12) {
+    std::string input = "()()#()()";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(4, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses13) {
+    std::string input = "echo \"(hello world)\" ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, Parentheses14) {
+    std::string input = "(echo \"testing #thi(s is a comment()\" && echo one) && echo echo";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(7, tokens.size());
+}
+
+
+
+TEST(TokenizerTest, usingTestCommand1) {
+    std::string input = "test -e file.cpp && echo one";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+
+TEST(TokenizerTest, usingTestCommand2) {
+    std::string input = "[-f file.cpp] && echo one";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+
+TEST(TokenizerTest, usingTestCommand3) {
+    std::string input = "echo \"I am not a test command but just a comment [-e somefile.cpp]\" ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(1, tokens.size());
+}
+
+TEST(TokenizerTest, usingTestCommand4) {
+    std::string input = " [-e file.h] && [ file.cpp ] ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
+
+TEST(TokenizerTest, usingTestCommand5) {
+    std::string input = " echo \" echo:) :) [-e file.h] \" && [ file.cpp ] ";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(3, tokens.size());
+}
