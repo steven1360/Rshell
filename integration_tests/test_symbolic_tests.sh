@@ -1,6 +1,8 @@
 #!/bin/sh
 
 INPUTS=("[ -e integration_test.cpp ]"
+		"[ -f integration_test.cpp ]"
+		"[ -d integration_test.cpp ]"
 		"[ -f test_literal_tests.sh ]"
 		"[-d dir ]"
 		"[ test -e int_test] && [echo path exists ]"
@@ -11,6 +13,7 @@ INPUTS=("[ -e integration_test.cpp ]"
 		"[ idk ]"
 		"[ -a integration_test.cpp ]"
 		"[ integration_test.cpp ]"
+		"[]"
 )
 
 for input in "${INPUTS[@]}"

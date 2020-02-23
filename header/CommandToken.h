@@ -124,8 +124,8 @@ class CommandToken : public Token {
             }
 
             //Check if valid flag
-            if ( !flagIsValid(flag) ) {
-                std::cout << "Invalid Flag" << std::endl;
+            if ( arguments.size() >= 2 && !flagIsValid(flag) ) {
+                std::cout << "Invalid Arguments" << std::endl;
                 return 0;
             }
 
