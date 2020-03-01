@@ -42,7 +42,7 @@ class Executor {
 			std::vector<Token*> postfix;
 
 			for (Token* t : tokens) {
-				if (t->getIdentity() == ID::COMMAND) {
+				if (t->getIdentity() == ID::COMMAND || t->getIdentity() == ID::IO) {
 					out.push(t);
 				}
 
@@ -101,7 +101,7 @@ class Executor {
 
 				currToken = postfix.at(i);
 
-				if (currToken->getIdentity() == ID::COMMAND ) {
+				if (currToken->getIdentity() == ID::COMMAND || currToken->getIdentity() == ID::IO ) {
 					s.push(currToken);
 				}
 				else if (currToken->getIdentity() == ID::CONNECTOR) {
