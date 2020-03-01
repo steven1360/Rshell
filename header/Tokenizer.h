@@ -15,90 +15,79 @@ class Tokenizer {
             removeComment(s);
             std::vector<Token*> v;
             std::string command;
-            bool quoteMarkFound = false;
-            bool bracketFound = false;
-
-            if (s == "\n") {
+            bool commentFlag = false;
+            if (s == "\n") {    
                 return v;
             }
 
-
             for (unsigned i = 0; i < s.size(); i++) {
 
-                auto pair = getExecAndArg(command);
-
-                //Found quotation mark
-                if (!quoteMarkFound && s.at(i) == '"') {
-                    quoteMarkFound = true;
-                }
-                else if ( !quoteMarkFound && !bracketFound && s.at(i) == '[') {
-                    bracketFound = true;
-                }
-                //found connector (&& or ||)
-                else if (  (i + 1 < s.size()) && isAConnector( s.substr(i, 2) ) && !quoteMarkFound && !bracketFound ) {
-
-                    if (has_IO_operator(command)) {
-                        v.push_back( new IOToken( removeWhitespace(command) ) );
+                if ( s.at(i) == '"' ) {
+                    commentFlag = true;
+                    i++;
+                    while (s.at(i) != '"') {
+                        command += s.at(i++);
                     }
-                    else if (!pair.first.empty() || !pair.second.empty()) {
-                        v.push_back( new CommandToken( pair.first, pair.second) );
+                    continue;
+                }
+                else if (s.at(i) == '[') {
+                    std::string arg;
+                    i++;
+                    while (s.at(i) != ']') {
+                        arg += s.at(i++);
+                    }
+                    command = command + "test" + " " + arg;
+                    continue;
+                }
+                //found connector (&& or ||) 
+                else if (  (i + 1 < s.size()) && isAConnector( s.substr(i, 2) ) ) {
+
+                    if ( !command.empty() && !isAllWhitespace(command) )  {
+                        v.push_back( new CommandToken(command) );
                     }
 
                     v.push_back( new ConnectorToken( s.substr(i, 2) ) );
 
                     command.clear(); //command already transformed into token, so clear the string
                     i++; //increment one more time bc connector 2 characters ==> read an extra char
+                    commentFlag = false;
 
                 }
-                //found semicolon
-                else if ( s.at(i) == ';' && !quoteMarkFound && !bracketFound ) {
-
-                    if (has_IO_operator(command)) {
-                        v.push_back( new IOToken(removeWhitespace(command)) );
-                    }
-                    else if (!pair.first.empty() || !pair.second.empty()) {
-
-                        v.push_back( new CommandToken( pair.first, pair.second) );
+                //Found IO >>
+                else if ( i + 1 < s.size() && s.substr(i, 2) == ">>" ) {
+                    
+                    if ( !command.empty() && !isAllWhitespace(command) )  {
+                        v.push_back( new CommandToken(command) );
                     }
 
-                    v.push_back( new ConnectorToken( ";" ) );
+                    v.push_back( new ConnectorToken( s.substr(i, 2) ) );
+
+                    command.clear(); //command already transformed into token, so clear the string
+                    i++; //increment one more time bc connector 2 characters ==> read an extra char
+                    commentFlag = false;
+                }
+                //Found IO '>'  '<' '|' 
+                else if ( s.at(i) == '>' || s.at(i) == '<' || s.at(i) == '|') {
+
+                    if ( !command.empty() && !isAllWhitespace(command) )  {
+                        v.push_back( new CommandToken(command) );
+                    }
+                    v.push_back( new IOToken( std::string(1, s.at(i)) ) );
+
                     command.clear();
+                    commentFlag = false;
                 }
-                  //Found the next quotation mark 
-                else if (quoteMarkFound) {
-                    if (s.at(i) == '"' && (!pair.first.empty() || !pair.second.empty()) ) {
-                        quoteMarkFound = false;
-                        //v.push_back( new CommandToken( pair.first, pair.second) );
-                        //command.clear();
-                    }
-                    else {
-                        command += s.at(i);
-                    }
-                }
-                //Found the ending bracket ']'
-                else if (bracketFound) {
-                    if (s.at(i) == ']' ) {
-                        bracketFound = false;
-                        v.push_back( new CommandToken( "test", removeWhitespace(command) ) );
-                        command.clear();
-                    }
-                    else {
-                        command += s.at(i);
-                    }
-                }
-                //Found parentheses
-                else if ( s.at(i) == '(' || s.at(i) == ')') {
-                    std::string str;
-                    str.push_back(s.at(i));
 
-                    if (has_IO_operator(command)) {
-                        v.push_back( new IOToken(command) );
+                //found semicolon or parentheses 
+                else if ( s.at(i) == ';' || s.at(i) == ')' || s.at(i) == '(') {
+                    if ( !command.empty() && !isAllWhitespace(command) )  {
+                        v.push_back( new CommandToken(command) );
                     }
-                    else if (!pair.first.empty() || !pair.second.empty()) {
-                        v.push_back( new CommandToken( pair.first, pair.second) );
-                        command.clear();
-                    }
-                    v.push_back( new ConnectorToken( str ) );
+
+                    v.push_back( new ConnectorToken( std::string(1, s.at(i)) ) );
+
+                    command.clear();
+                    commentFlag = false;
                 }
                 //store characters read so far
                 else {
@@ -108,12 +97,10 @@ class Tokenizer {
             }
 
             //In case string doesn't end with ';' 
-            auto pair = getExecAndArg(command);
-            if (!command.empty() && (!pair.first.empty() || !pair.second.empty()) ) {
-            
-                v.push_back( new CommandToken( removeWhitespace(pair.first), removeWhitespace(pair.second)  ) );
-            }
 
+            if (!command.empty() && !isAllWhitespace(command) ) {
+                v.push_back( new CommandToken(command) );
+            }
             if (!v.empty() && v.back()->getString() == ";") {
                 v.pop_back();
             }
@@ -122,74 +109,6 @@ class Tokenizer {
         }
 
     private:
-
-        static std::pair<std::string, std::string> getExecAndArg(const std::string& command) {
-            std::string executable;
-            std::string argument;
-            int locationOfFirstSpace = -1;
-
-
-            if ( command.empty() || isAllWhitespace(command) ) {
-                return std::pair<std::string, std::string>(executable, argument);
-            }
-
-            //Remove leading whitespace from front and back
-            std::string newStr = removeWhitespace(command);
-
-
-            //Look for first whitespace char in string
-            for (unsigned i = 0; i < newStr.size(); i++) {
-                if ( newStr.at(i) == ' ') {
-                    locationOfFirstSpace = i;
-                    break;
-                }
-            }
-            //no whitespace char ==> no args
-            if (locationOfFirstSpace == -1) {
-                executable = newStr;
-            }
-            else {
-            //break command into executable and argument
-                executable = removeWhitespace( newStr.substr(0, locationOfFirstSpace) );
-                argument = removeWhitespace( newStr.substr(locationOfFirstSpace + 1, newStr.size() - locationOfFirstSpace + 1) );
-            }
-            return std::pair<std::string, std::string>(executable, argument);
-        }
-
-        static std::string removeWhitespace(const std::string& s) {
-            std::string str;
-            unsigned i = 0;
-            unsigned k = s.size() - 1;
-
-            if (s.empty()) {
-                return "";
-            }
-
-            //Remove whitespaces from the left
-            for (i = 0; i < s.size(); i++) {
-                if (s.at(i) != ' ' ) {
-                    break;
-                }
-            }
-            //Remove whitespaces from the right
-            for (k = s.size() - 1; k >= 0; k--) {
-                if (s.at(k) != ' ' ) {
-                    break;
-                }
-            }
-
-            return s.substr(i, k - i + 1);
-        }
-
-        static bool isAConnector(const std::string& connector) {
-            if (connector == "&&" || connector == "||") {
-                return true;
-            }
-            return false;
-        }
-
-
-
         static bool isAllWhitespace(const std::string& s) {
             int counter = 0;
             for (unsigned i = 0; i < s.size(); i++) {
@@ -200,6 +119,14 @@ class Tokenizer {
             if (counter == s.size()) return true;
             return false;
         }
+
+        static bool isAConnector(const std::string& connector) {
+            if (connector == "&&" || connector == "||") {
+                return true;
+            }
+            return false;
+        }
+
 
         static void removeComment(std::string& s) {
             //numQuotationsSofar even -> is a comment
@@ -225,6 +152,15 @@ class Tokenizer {
         static bool has_IO_operator(const std::string& s) {
             for (unsigned i = 0; i < s.size(); i++) {
                 if (s.at(i) == '<' || s.at(i) == '>') {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static bool has_pipe(const std::string& s) {
+            for (unsigned i = 0; i < s.size(); i++) {
+                if (s.at(i) == '|') {
                     return true;
                 }
             }

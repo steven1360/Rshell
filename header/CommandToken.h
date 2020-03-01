@@ -18,9 +18,10 @@ class CommandToken : public Token {
         std::string executable;
         std::string argument;
     public:
-        CommandToken(const std::string& exec, const std::string& arg) {
-            executable = exec;
-            argument = arg;
+        CommandToken(const std::string& command) {
+            auto pair = getExecAndArg(command);
+            executable = pair.first;
+            argument = pair.second;
 
         }
         virtual std::string getString() {

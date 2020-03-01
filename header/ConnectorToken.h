@@ -11,7 +11,6 @@ class ConnectorToken : public Token {
     public:
         ConnectorToken(const std::string& s) {
             value = s;
-            id = ID::CONNECTOR;
         }
 
         virtual std::string getString() {
