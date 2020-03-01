@@ -6,6 +6,7 @@
 #include <iostream> 
 #include "CommandToken.h"
 #include "ConnectorToken.h"
+#include "IOToken.h"
 
 class Tokenizer {
     public:
@@ -25,8 +26,6 @@ class Tokenizer {
             for (unsigned i = 0; i < s.size(); i++) {
 
                 auto pair = getExecAndArg(command);
-                // std::cout << "pair first:" << pair.first << ":pair first" << std::endl;
-                // std::cout << "pair second:" << pair.second << ":pair second" << std::endl;
 
                 //Found quotation mark
                 if (!quoteMarkFound && s.at(i) == '"') {
@@ -38,8 +37,10 @@ class Tokenizer {
                 //found connector (&& or ||)
                 else if (  (i + 1 < s.size()) && isAConnector( s.substr(i, 2) ) && !quoteMarkFound && !bracketFound ) {
 
-
-                    if (!pair.first.empty() || !pair.second.empty()) {
+                    if (has_IO_operator(command)) {
+                        v.push_back( new IOToken( removeWhitespace(command) ) );
+                    }
+                    else if (!pair.first.empty() || !pair.second.empty()) {
                         v.push_back( new CommandToken( pair.first, pair.second) );
                     }
 
@@ -52,8 +53,10 @@ class Tokenizer {
                 //found semicolon
                 else if ( s.at(i) == ';' && !quoteMarkFound && !bracketFound ) {
 
-
-                    if (!pair.first.empty() || !pair.second.empty()) {
+                    if (has_IO_operator(command)) {
+                        v.push_back( new IOToken(removeWhitespace(command)) );
+                    }
+                    else if (!pair.first.empty() || !pair.second.empty()) {
 
                         v.push_back( new CommandToken( pair.first, pair.second) );
                     }
@@ -65,13 +68,14 @@ class Tokenizer {
                 else if (quoteMarkFound) {
                     if (s.at(i) == '"' && (!pair.first.empty() || !pair.second.empty()) ) {
                         quoteMarkFound = false;
-                        v.push_back( new CommandToken( pair.first, pair.second) );
-                        command.clear();
+                        //v.push_back( new CommandToken( pair.first, pair.second) );
+                        //command.clear();
                     }
                     else {
                         command += s.at(i);
                     }
                 }
+                //Found the ending bracket ']'
                 else if (bracketFound) {
                     if (s.at(i) == ']' ) {
                         bracketFound = false;
@@ -87,7 +91,10 @@ class Tokenizer {
                     std::string str;
                     str.push_back(s.at(i));
 
-                    if (!pair.first.empty() || !pair.second.empty()) {
+                    if (has_IO_operator(command)) {
+                        v.push_back( new IOToken(command) );
+                    }
+                    else if (!pair.first.empty() || !pair.second.empty()) {
                         v.push_back( new CommandToken( pair.first, pair.second) );
                         command.clear();
                     }
@@ -213,6 +220,15 @@ class Tokenizer {
             if (hashLocation != -1) {
                 s = s.substr(0, hashLocation);
             }
+        }
+
+        static bool has_IO_operator(const std::string& s) {
+            for (unsigned i = 0; i < s.size(); i++) {
+                if (s.at(i) == '<' || s.at(i) == '>') {
+                    return true;
+                }
+            }
+            return false;
         }
 
 };
