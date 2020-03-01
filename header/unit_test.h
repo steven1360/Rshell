@@ -333,3 +333,55 @@ TEST(TokenizerTest, usingTestCommand5) {
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
     EXPECT_EQ(3, tokens.size());
 }
+
+TEST(TokenizerTest, usingIOToken1) {
+    std::string input1 = "ls -la > output.txt";
+    std::string input2 = "ls -la < output.txt";
+    std::vector<Token*> tokens1 = Tokenizer::makeTokens(input1);
+    std::vector<Token*> tokens2 = Tokenizer::makeTokens(input2);
+    EXPECT_EQ(1, tokens1.size());
+    EXPECT_EQ("ls -la > output.txt", tokens1.back()->getString());
+    EXPECT_EQ(1, tokens2.size());
+    EXPECT_EQ("ls -la < output.txt", tokens2.back()->getString());
+}
+
+TEST(TokenizerTest, usingIOToken2) {
+    std::string input1 = "echo \"david phung\" > output.txt";
+    std::string input2 = "echo \"david phung\" < output.txt";
+    std::vector<Token*> tokens1 = Tokenizer::makeTokens(input1);
+    std::vector<Token*> tokens2 = Tokenizer::makeTokens(input2);
+    EXPECT_EQ(1, tokens1.size());
+    EXPECT_EQ("echo david phung > output.txt", tokens1.back()->getString());
+    EXPECT_EQ(1, tokens2.size());
+    EXPECT_EQ("echo david phung < output.txt", tokens2.back()->getString());
+}
+
+TEST(TokenizerTest, usingIOToken3) {
+    std::string input1 = "echo \"ls > file.txt\" > output.txt";
+    std::string input2 = "echo \"ls < file.txt\" > output.txt";
+    std::vector<Token*> tokens1 = Tokenizer::makeTokens(input1);
+    std::vector<Token*> tokens2 = Tokenizer::makeTokens(input2);
+    EXPECT_EQ(1, tokens1.size());
+    EXPECT_EQ("echo ls > file.txt > output.txt", tokens1.back()->getString());
+    EXPECT_EQ(1, tokens2.size());
+    EXPECT_EQ("echo ls < file.txt > output.txt", tokens2.back()->getString());
+}
+
+TEST(TokenizerTest, usingIOToken4) {
+    std::string input1 = "echo \"ls > file.txt\" > output.txt";
+    std::string input2 = "echo \"ls > file.txt\" < output.txt";
+    std::vector<Token*> tokens1 = Tokenizer::makeTokens(input1);
+    std::vector<Token*> tokens2 = Tokenizer::makeTokens(input2);
+    EXPECT_EQ(1, tokens1.size());
+    EXPECT_EQ("echo ls > file.txt > output.txt", tokens1.back()->getString());
+    EXPECT_EQ(1, tokens2.size());
+    EXPECT_EQ("echo ls > file.txt < output.txt", tokens2.back()->getString());
+}
+
+TEST(TokenizerTest, usingIOToken5) {
+    std::string input = "ls -a; ls; cat < file.txt && echo test; cat > >";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(9, tokens.size());
+    EXPECT_EQ("cat  <  file.txt", tokens.at(4)->getString());
+    EXPECT_EQ("cat > >", tokens.back()->getString());
+}

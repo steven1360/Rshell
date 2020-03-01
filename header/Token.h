@@ -5,6 +5,7 @@
 enum ID {
 	COMMAND,
 	CONNECTOR,
+    IO
 };
 
 class Token {
