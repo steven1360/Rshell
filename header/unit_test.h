@@ -451,3 +451,18 @@ TEST(TokenizerTest, usingIOToken6) {
     EXPECT_EQ("<", tokens.at(5)->getString());
     EXPECT_EQ(">", tokens.back()->getString());
 }
+
+TEST(TokenizerTest, usingIOToken7) {
+    std::string input = "(ls -la > file.txt && (eco message > file.txt || (echo sup && echo lol > file.txt) ) ) && echo hi";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(21, tokens.size());
+    EXPECT_EQ(">", tokens.at(2)->getString());
+    EXPECT_EQ("echo sup", tokens.at(11)->getString());
+}
+
+TEST(TokenizerTest, usingIOToken8) {
+    std::string input = "cat < existingInputFile | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z > newOutputFile2";
+    std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ(11, tokens.size());
+}
+

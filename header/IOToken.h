@@ -15,10 +15,10 @@ class IOToken : public Token {
 
 			std::string r = right->getString();
 			r.pop_back(); // backslash '\' always gets printed at the end for some reason
-			
+
 			if (op == ">") {
 
-				int fd = open(const_cast<char*>(r.c_str()), O_CREAT | O_APPEND | O_WRONLY, S_IRWXU | S_IRWXG);
+				int fd = open(const_cast<char*>(r.c_str()), O_CREAT | O_WRONLY, S_IRWXU | S_IRWXG);
 				if (fd < 0) {
 					perror("open");
 				}

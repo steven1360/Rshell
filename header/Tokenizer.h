@@ -60,7 +60,7 @@ class Tokenizer {
                         v.push_back( new CommandToken(command) );
                     }
 
-                    v.push_back( new ConnectorToken( s.substr(i, 2) ) );
+                    v.push_back( new IOToken( s.substr(i, 2) ) );
 
                     command.clear(); //command already transformed into token, so clear the string
                     i++; //increment one more time bc connector 2 characters ==> read an extra char
