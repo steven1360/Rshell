@@ -29,12 +29,12 @@ class IOToken : public Token {
 			}
 			else if (op == "<") {//accept input from a file
 std::cout << r << std::endl;
-				int fd = open(const_cast<char*>(r.c_str()), O_CREAT | O_WRONLY, S_IRWXU | S_IRWXG);
+				int fd = open(const_cast<char*>(r.c_str()), O_CREAT | O_RDONLY, S_IRWXU | S_IRWXG);
 				if (fd < 0) {
 					perror("open");
 				}
 				dup2(fd, 0);
-				right->execute();
+				left->execute();
 				close(fd);
 			}
 			else if (op == ">>") {
