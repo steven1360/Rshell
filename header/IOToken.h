@@ -3,6 +3,16 @@
 #include<stdio.h> 
 #include <unistd.h> 
 #include <fcntl.h>
+#include <iostream>
+#include <string>
+#include <thread>
+#include <chrono>
+#include <cstdlib>
+#include <cassert>
+#include <fcntl.h>
+#include <vector>
+#include <stdio.h>
+#include <cstring>
 
 class IOToken : public Token {
 	private:
@@ -29,7 +39,21 @@ class IOToken : public Token {
 				execute(r, 1, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG);
 			}
 			else if (op == "|") {
+				std::string1 = left->getString();
+				std::string2 = right->getString();
+			
+				const int PATH_MAX = 420;
+				char buffer[PATH_MAX];
 
+				memset(buffer, '\0', PATH_MAX);
+				
+				FILE* in_pipe = propen(string1.c_str(), string2.c_str());
+
+				while(fgets(buffer, PATH_MAX, in_pipe) != nullptr){
+					//carry out code
+				}
+
+				pclose(in_pipe);
 			}
 		}
 
