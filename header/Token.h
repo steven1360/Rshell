@@ -20,6 +20,7 @@ class Token {
         virtual void setLeft(Token* t) { left = t; }
         virtual void setRight(Token* t) { right = t; }
         virtual ID getIdentity() = 0;
+
         virtual std::pair<std::string, std::string> getExecAndArg(const std::string& command) {
             std::string executable;
             std::string argument;

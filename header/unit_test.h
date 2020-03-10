@@ -463,6 +463,13 @@ TEST(TokenizerTest, usingIOToken7) {
 TEST(TokenizerTest, usingIOToken8) {
     std::string input = "cat < existingInputFile | tr A-Z a-z | tee newOutputFile1 | tr a-z A-Z > newOutputFile2";
     std::vector<Token*> tokens = Tokenizer::makeTokens(input);
+    EXPECT_EQ("|", tokens.at(3)->getString());
+    EXPECT_EQ("tr A-Z a-z", tokens.at(4)->getString());
+    EXPECT_EQ("tee newOutputFile1", tokens.at(6)->getString());
     EXPECT_EQ(11, tokens.size());
+
+    for (Token* t : tokens) {
+        std::cout << t->getString() << std::endl;
+    }
 }
 

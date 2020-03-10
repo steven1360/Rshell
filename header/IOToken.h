@@ -22,11 +22,12 @@ class IOToken : public Token {
 			op = s; 
 		}
 		virtual int execute() {
-
+				
 			std::string r = right->getString();
 			r.pop_back(); // backslash '\' always gets printed at the end for some reason
 
 			//left side command, right side file. Writes output of command to file
+
 			if (op == ">") {
 				return execute(r, 1, O_CREAT | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO);
 			}
@@ -38,27 +39,6 @@ class IOToken : public Token {
 			else if (op == ">>") {
 				return execute(r, 1, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG);
 			}
-			else if (op == "|") {
-
-
-				const int PATH_MAX = 420;
-				char buffer[PATH_MAX];
-				char buffer2[PATH_MAX];
-
-				memset(buffer, '\0', PATH_MAX);
-				memset(buffer2, '\0', PATH_MAX);
-				
-				FILE* in_pipe = popen(left->getString().c_str() , "r");
-				FILE* out_pipe = popen(right->getString().c_str(), "w");
-
-				while(fgets(buffer, PATH_MAX, in_pipe) != nullptr){
-					//carry out code
-					fputs(buffer, out_pipe);
-				}
-
-				pclose(in_pipe);
-				pclose(out_pipe);
-			}
 		}
 
 		virtual ID getIdentity() {
@@ -67,9 +47,11 @@ class IOToken : public Token {
 
 		virtual std::string getString() {
 			return op;
+
 		}
 
 	private:
+
 
 		int execute(const std::string& file, int fdToReplace, int flags, mode_t mode) {
 

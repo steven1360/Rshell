@@ -19,12 +19,30 @@ class Executor {
 		tokens = v;
  	}
 	void execute() {
+
 		if (!hasValidParentheses()) {
 			std::cout << "Error: Invalid Parentheses" << std::endl;
 			return;
 		}
 
 		if (tokens.empty()) {
+			return;
+		}
+
+		int pipeLocation = locatePipe();
+		std::string leftStr;
+		std::string rightStr;
+
+		if (pipeLocation != -1) {
+			for (unsigned i = 0; i < pipeLocation; i++) {
+				leftStr = leftStr + tokens.at(i)->getString() + " ";
+			}
+
+			for (unsigned j = pipeLocation + 1; j < tokens.size(); j++) {
+				rightStr = rightStr + tokens.at(j)->getString() + " ";
+			}
+
+			pipe(leftStr, rightStr);
 			return;
 		}
 
@@ -35,6 +53,31 @@ class Executor {
 
     }
 	private:
+
+		int pipe(const std::string& leftStr, const std::string& rightStr) {
+			const int PATH_MAX = 420;
+			char buffer[PATH_MAX];
+			char buffer2[PATH_MAX];
+				
+			memset(buffer, '\0', PATH_MAX);
+			memset(buffer2, '\0', PATH_MAX);
+
+			FILE* in_pipe = popen(leftStr.c_str() , "r");
+			FILE* out_pipe = popen(rightStr.c_str(), "w");
+
+			if (!in_pipe || !out_pipe) {
+				return 0;
+			}
+
+			while(fgets(buffer, PATH_MAX, in_pipe) != nullptr){
+				fputs(buffer, out_pipe);
+			}
+
+			pclose(in_pipe);
+			pclose(out_pipe);
+
+			return 1;
+		}
 
 		std::vector<Token*> shuntingYard() {
 			std::queue<Token*> out;
@@ -156,6 +199,15 @@ class Executor {
 			}
 
 			return true;
+		}
+
+		int locatePipe() {
+			for (unsigned i = 0; i < tokens.size(); i++) {
+				if (tokens.at(i)->getString() == "|") {
+					return i;
+				}
+			}
+			return -1;
 		}
 
 
