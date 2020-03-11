@@ -467,9 +467,5 @@ TEST(TokenizerTest, usingIOToken8) {
     EXPECT_EQ("tr A-Z a-z", tokens.at(4)->getString());
     EXPECT_EQ("tee newOutputFile1", tokens.at(6)->getString());
     EXPECT_EQ(11, tokens.size());
-
-    for (Token* t : tokens) {
-        std::cout << t->getString() << std::endl;
-    }
 }
 
