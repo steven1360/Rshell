@@ -29,6 +29,11 @@ class Executor {
 			return;
 		}
 
+		if ( !hasValidConnectors()) {
+			std::cout << "Error: invalid syntax" << std::endl;
+			return;
+		}
+
 		int pipeLocation = locatePipe();
 		std::string leftStr;
 		std::string rightStr;
@@ -194,6 +199,23 @@ class Executor {
 			for (unsigned i = 0; i < leftParentheses.size(); i++) {
 				//left parenthesis position should always be less than right parenthesis
 				if (leftParentheses.at(i) > rightParentheses.at(i)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		bool hasValidConnectors() {
+			if (tokens.at(0)->getIdentity() == ID::CONNECTOR) {
+				return false;
+			}
+			if (tokens.back()->getIdentity() == ID::CONNECTOR) {
+				return false;
+			}
+
+			for (unsigned i = 0; i + 1 < tokens.size(); i++) {
+				if (tokens.at(i)->getIdentity() == ID::CONNECTOR &&  tokens.at(i+1)->getIdentity() == ID::CONNECTOR) {
 					return false;
 				}
 			}
