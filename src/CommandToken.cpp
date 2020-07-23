@@ -1,25 +1,23 @@
-#include "CommandToken.h"
+#include "../header/CommandToken.h"
 
 
-CommandToken::CommandToken(const std::string& command) {
-    Command command = parse_command(command);
-    executable = command.executable;
-    argument = command.argument;
+CommandToken::CommandToken(const std::string& command_str) {
+    command = parse_command(command_str);
 }
 
-Command CommandToken::parse_command(const std::string& command) {
+Command CommandToken::parse_command(const std::string& command_str) {
     std::string executable;
-    std::string argument;
+    std::string arguments;
     std::string parsed_str;
     int location_of_whitespace_char = -1;
 
 
-    if ( command.empty() || contains_only_whitespace(command) ) {
+    if ( command_str.empty() || contains_only_whitespace(command_str) ) {
         return Command();
     }
 
     //Remove leading whitespace from front and back
-    parsed_str = remove_extra_whitespace(command);
+    parsed_str = remove_extra_whitespace(command_str);
 
 
     //Look for first whitespace char in string
@@ -35,10 +33,10 @@ Command CommandToken::parse_command(const std::string& command) {
 		}
 		else {
 			//break command into executable and argument
-			executable = removeWhitespace( parsed_str.substr(0, location_of_whitespace_char) );
-			argument = removeWhitespace( parsed_str.substr(location_of_whitespace_char + 1, parsed_str.size() - location_of_whitespace_char + 1) );
+			executable = remove_extra_whitespace( parsed_str.substr(0, location_of_whitespace_char) );
+			arguments = remove_extra_whitespace( parsed_str.substr(location_of_whitespace_char + 1, parsed_str.size() - location_of_whitespace_char + 1) );
 		}
-	return Command(executable, argument);
+	return Command(executable, arguments);
 }
 
 
@@ -80,30 +78,30 @@ bool CommandToken::contains_only_whitespace(const std::string& s) {
     return (number_of_whitespace_chars == s.size()) ? true : false;
 }
 
-virtual std::string CommandToken::toString() {
-    return executable + " " + argument;
+std::string CommandToken::toString() {
+    return command.executable + " " + command.arguments;
 }
 
-virtual bool CommandToken::execute() {
-    std::vector<std::string> arguments = parse_arguments(argument);
-    int c_string_size = arguments.size() + 2;  // +1 for exec string, +1 for null terminated string
+bool CommandToken::execute() {
+    std::vector<std::string> arguments_vec = parse_arguments(command.arguments);
+    int c_string_size = arguments_vec.size() + 2;  // +1 for exec string, +1 for null terminated string
     int index = 0;
-    char* command[c_string_size];
+    char* command_str[c_string_size];
 
-    command[index] = const_cast<char*>( executable.c_str() );
-    for (const std::string& str : arguments) {
-        command[++index] = const_cast<char*>( str.c_str() );
+    command_str[index] = const_cast<char*>( command.executable.c_str() );
+    for (const std::string& str : arguments_vec) {
+        command_str[++index] = const_cast<char*>( str.c_str() );
     }
-    command[index + 1] = NULL;
+    command_str[index + 1] = NULL;
     
     char exitS[] = "exit";
-    if(strcmp(command[0], exitS) == 0){
+    if(strcmp(command_str[0], exitS) == 0){
         exit(0);
     }
 
     char testS[] = "test";
-    if (strcmp(command[0], testS) == 0) {
-        return executeTest(arguments);
+    if (strcmp(command_str[0], testS) == 0) {
+        return executeTest(arguments_vec);
     }
 
 
@@ -111,8 +109,8 @@ virtual bool CommandToken::execute() {
     pid_t process = fork();
 
     if (process == 0) {
-        if (execvp(command[0], command) < 0) {
-            perror(command[0]);
+        if (execvp(command_str[0], command_str) < 0) {
+            perror(command_str[0]);
             exit(3);
         }
 
@@ -138,7 +136,7 @@ virtual bool CommandToken::execute() {
 }
 
 std::vector<std::string> CommandToken::parse_arguments(const std::string& s) {
-    std::vector<std::string> arguments;
+    std::vector<std::string> arguments_vec;
     std::string currentStr;
 
     for (unsigned i = 0; i < s.size(); i++) {
@@ -146,35 +144,35 @@ std::vector<std::string> CommandToken::parse_arguments(const std::string& s) {
             currentStr += s.at(i);
         }
         else {
-            arguments.push_back(currentStr);
+            arguments_vec.push_back(currentStr);
             currentStr.clear();
         }
     }
 
     if (!currentStr.empty()) {
-        arguments.push_back(currentStr);
+        arguments_vec.push_back(currentStr);
     }
 
-    return arguments;
+    return arguments_vec;
 }
 
-bool CommandToken::executeTest(const std::vector<std::string> arguments) {
+bool CommandToken::executeTest(const std::vector<std::string> arguments_vec) {
     struct stat buf;
     std::string flag;
     std::string path;
 
-    if ( arguments.size() == 2 ) {
-        flag = arguments.at(0);
-        path = arguments.at(1);
-        stat(arguments.at(1).c_str() , &buf);
+    if ( arguments_vec.size() == 2 ) {
+        flag = arguments_vec.at(0);
+        path = arguments_vec.at(1);
+        stat(arguments_vec.at(1).c_str() , &buf);
     }
-    else if ( arguments.size() == 1 ) {
-        path = arguments.at(0);
-        stat(arguments.at(0).c_str(), &buf);
+    else if ( arguments_vec.size() == 1 ) {
+        path = arguments_vec.at(0);
+        stat(arguments_vec.at(0).c_str(), &buf);
     }
 
     //Check if valid flag
-    if ( arguments.size() >= 2 && !flagIsValid(flag) ) {
+    if ( arguments_vec.size() >= 2 && !flagIsValid(flag) ) {
         std::cout << "Invalid Arguments" << std::endl;
         return 0;
     }
@@ -213,4 +211,8 @@ bool CommandToken::flagIsValid(const std::string& s) {
         return true;
     }
     return false;
+}
+
+std::string CommandToken::token_name() {
+    return "CommandToken";
 }

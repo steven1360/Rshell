@@ -4,15 +4,17 @@
 
 
 class Token {
-	private:
+	protected:
 	    Token* left = nullptr;
         Token* right = nullptr;
     public:
-        Token() {}
-        virtual int execute() = 0;
+        virtual bool execute() = 0;
         virtual std::string toString() = 0;
-        void setLeft(Token* t) { left = t; }
-        void setRight(Token* t) { right = t; }
+        virtual std::string token_name() = 0;
+        void setLeft(Token* t);
+        void setRight(Token* t);
+        Token* getLeft();
+        Token* getRight();
 };
 
 #endif

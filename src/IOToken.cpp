@@ -1,12 +1,12 @@
-#include "IOToken.h"
+#include "../header/IOToken.h"
 
 IOToken::IOToken(const std::string& s) {
 	op = s; 
 }
 
-virtual bool IOToken::execute() {
+bool IOToken::execute() {
 		
-	std::string r = right->getString();
+	std::string r = right->toString();
 	r.pop_back(); // backslash '\' always gets printed at the end for some reason
 
 	//left side command, right side file. Writes output of command to file
@@ -18,7 +18,7 @@ virtual bool IOToken::execute() {
 	else if (op == "<") {
 		return execute(r, 0, O_CREAT | O_RDONLY, S_IRWXU | S_IRWXG);
 	}
-	// same thing as '>' accept you append instead of write
+	// same thing as '>' except you append instead of write
 	else if (op == ">>") {
 		return execute(r, 1, O_CREAT | O_APPEND | O_RDWR, S_IRWXU | S_IRWXG);
 	}
@@ -42,6 +42,10 @@ bool IOToken::execute(const std::string& file, int fdToReplace, int flags, mode_
 	return 1;
 }
 
-virtual std::string IOToken::toString() {
+std::string IOToken::toString() {
 	return op;
+}
+
+std::string IOToken::token_name() {
+	return "IOToken";
 }

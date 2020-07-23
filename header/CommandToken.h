@@ -18,23 +18,23 @@ struct Command {
         std::string executable;
         std::string arguments;
         Command() {}
-        Command(std::string executable, std::string arguments) : executable(executable), arguments(arguments) {}
+        Command(std::string exec, std::string args) : executable(exec), arguments(args) {}
 };
 
 
 class CommandToken : public Token {
     private:
-        std::string executable;
-        std::string arguments;
+        Command command;
     public:
         CommandToken(const std::string& command);
         virtual std::string toString();
+        virtual std::string token_name();
         virtual bool execute();
     private:
-        Command parse_command(std::string command);
+        Command parse_command(const std::string& command);
+        std::vector<std::string> parse_arguments(const std::string& s);
         std::string remove_extra_whitespace(const std::string& s);
         bool contains_only_whitespace(const std::string& s);
-        std::vector<std::string> parse_arguments(const std::string& s);
         bool executeTest(const std::vector<std::string> arguments);
         bool cmpFlagAndPath(const std::string& flag, const std::string& path, struct stat* buf);
         bool flagIsValid(const std::string& s);

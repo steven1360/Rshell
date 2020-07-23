@@ -21,6 +21,7 @@ class IOToken : public Token {
 		IOToken(const std::string& s);
 		virtual bool execute();
 		virtual std::string toString();
+		virtual std::string token_name();
 
 	private:
 		bool execute(const std::string& file, int fdToReplace, int flags, mode_t mode);
