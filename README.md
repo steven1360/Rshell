@@ -1,10 +1,5 @@
 # CS 100 Programming Project
 
-## Project Information
-* Winter 2020
-* Steven Truong, SID: 862115368
-* Terry Jung   , SID: 862073628
-
 ## Introduction
 This program is a command line interface that is able to take in commands in the the following format:
 `$ executable [argumentList] [connector] [executable] ...`. Inputs that are fed to the command line interface are first broken down into  tokens which inherit from a `Token` base class: `ExecToken`, `ArgToken`, `BadToken` and `ConnectorToken`. This is done by a single public method in the `Tokenizer` class, and it returns these tokens inside a vector. Then the `Executor` class' public method takes in a vector of these tokens and uses syscalls to execute the commands.
